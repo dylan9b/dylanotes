@@ -22,9 +22,12 @@ const routes: Routes = [
                 component: NotesListComponent
             },
             {
+                path: 'new',
+                component: NotesItemComponent,
+            },
+            {
                 path: ':id',
                 component: NotesItemComponent
-
             }
         ]
     }];

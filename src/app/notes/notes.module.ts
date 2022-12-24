@@ -8,7 +8,7 @@ import { NotesComponent } from './notes.component';
     imports: [
         NotesItemModule,
         NotesListModule,
-        NotesRoutingModule
+        NotesRoutingModule,
     ],
     declarations: [
         NotesComponent

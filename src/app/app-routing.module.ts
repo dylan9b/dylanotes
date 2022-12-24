@@ -14,6 +14,10 @@ const routes: Routes = [
                 loadChildren: () => import('./notes/list/notes-list.module').then(m => m.NotesListModule)
             },
             {
+                path: 'new',
+                loadChildren: () => import('./notes/item/notes-item.module').then(m => m.NotesItemModule)
+            },
+            {
                 path: ':id',
                 loadChildren: () => import('./notes/item/notes-item.module').then(m => m.NotesItemModule)
             }

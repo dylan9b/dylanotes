@@ -1,1 +1,66 @@
-<h2>NOTES LIST</h2>
+<app-header></app-header>
+
+<section class="app-notes-list">
+  <div class="container">
+    <div class="row mt-3 py-2">
+      <div class="col-12 col-lg-4 mx-auto">
+        <div class="row">
+          <div class="col-12">
+            <span class="app-notes-list__filter__container">
+              <i class="fas fa-search"></i>
+              <input
+                type="text"
+                class="form-control app-notes-input"
+                placeholder="Filter notes"
+              />
+            </span>
+          </div>
+        </div>
+
+        <div class="row app-notes-list__items">
+          <div class="col-12 mt-3" *ngFor="let item of notes; index as i">
+            <div class="app-notes-list__item">
+              <a [routerLink]="['/notes', item?.id]">
+                <p class="app-notes-list__item__title">
+                  {{ item?.title }}
+                </p>
+                <div class="app-notes-list__item__body">
+                  <p>{{ item?.body }}</p>
+                </div>
+              </a>
+              <span
+                class="app-notes-list__item__remove"
+                (click)="removeNote(i)"
+              >
+                <i class="fas fa-x"></i>
+              </span>
+
+              <div class="row">
+                <div class="col-12">
+                  <i
+                    (click)="pinNote(i)"
+                    [@pinUnpin]="item?.isPinned ? 'pinned' : 'unPinned'"
+                    class="fa-sharp fa-solid fa-thumbtack app-notes-list__item__pin-icon"
+                  ></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 mt-3">
+            <button
+              type="button"
+              class="app-notes-list__add"
+              (click)="addNote()"
+            >
+              <i class="fas fa-plus"></i>
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

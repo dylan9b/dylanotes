@@ -1,0 +1,136 @@
+@import "./../../../custom-styles.scss";
+
+.app-notes-list {
+    &__add {
+        background-color: $purple;
+        border-radius: 5px;
+        border: 1px solid $purple;
+        color: white;
+        transition: 0.2s ease all;
+        padding: 15px 20px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+
+        i {
+            transition: 0.2s ease all;
+            margin-right: 15px;
+            color: white;
+        }
+
+        &:hover {
+            transition: 0.2s ease all;
+            color: $purple;
+            border: 1px solid $purple;
+            background: white;
+
+            i {
+                color: $purple;
+            }
+        }
+    }
+
+    &__filter {
+        &__container {
+            i {
+                position: absolute;
+                padding: 10px;
+                pointer-events: none;
+            }
+
+            &__input {
+                padding-left: 2.5em;
+                border-radius: 50px;
+                box-shadow: none;
+                background: #ececec66;
+                transition: 0.3s ease all;
+
+                &:focus {
+                    border-color: transparent;
+                    transition: 0.3s ease all;
+                    box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 15%);
+                }
+            }
+        }
+    }
+
+    &__items {
+        max-height: 70vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        a {
+            text-decoration: none;
+        }
+    }
+
+    &__item {
+        position: relative;
+        background: white;
+        border-radius: 5px;
+        padding: 25px;
+
+        &:hover {
+            box-shadow: 0px 2px 15px 2px rgba(black, 0.068);
+            cursor: pointer;
+
+            .app-notes-list__item__remove {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        &__title {
+            margin: 0;
+            font-size: 22px;
+            font-weight: bold;
+            color: $purple;
+        }
+
+        &__body {
+            margin: 0;
+
+            max-height: 80px;
+            overflow: hidden;
+            position: relative;
+            color: #555;
+
+            &:after {
+                content: "";
+                left: 0;
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+                height: 50%;
+                pointer-events: none;
+                background: linear-gradient(to bottom, rgba(white, 0) 0%, rgba(white, 0.8) 50%, white 100%);
+            }
+        }
+
+        &__remove {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            height: 34px;
+            width: 34px;
+            background-color: $light-red;
+            border-radius: 4px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: red;
+
+            transition: 0.25s ease all;
+            transform: scale(0);
+
+            opacity: 0;
+
+            &:hover {
+                background-color: darken($light-red, 3%);
+            }
+        }
+    }
+}

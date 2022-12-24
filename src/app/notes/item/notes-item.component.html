@@ -1,1 +1,86 @@
-<h3>NOTES ITEM</h3>
+<app-header></app-header>
+
+<section class="app-notes-item">
+  <div class="container app-notes-item__container">
+    <form *ngIf="form" [formGroup]="form" (ngSubmit)="submitForm()">
+      <div class="row mt-3 py-2">
+        <div class="col-12 col-lg-4 mx-auto app-notes-item__content-wrapper">
+          <div class="row">
+            <div class="col-12">
+              <!-- TITLE - START-->
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-floating mb-3">
+                    <input
+                      type="text"
+                      class="form-control app-notes-input"
+                      id="titleInput"
+                      formControlName="title"
+                      placeholder="Title"
+                      [class.danger]="validation?.isTitleInvalid()"
+                    />
+                    <label for="titleInput">Title</label>
+
+                    <span *ngIf="validation?.isTitleInvalid()">
+                      <p
+                        class="text-danger"
+                        *ngIf="form?.get('title')?.errors?.['required']"
+                      >
+                        Title is required
+                      </p>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <!-- TITLE - END -->
+
+              <!-- BODY - START -->
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-floating mb-3">
+                    <textarea
+                      class="form-control app-notes-input"
+                      placeholder="Body"
+                      id="bodyInput"
+                      formControlName="body"
+                      [class.danger]="validation?.isBodyInvalid()"
+                    ></textarea>
+                    <label for="bodyInput">Body</label>
+                    <span *ngIf="validation?.isBodyInvalid()">
+                      <p
+                        class="text-danger"
+                        *ngIf="form?.get('body')?.errors?.['required']"
+                      >
+                        Body is required
+                      </p>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <!-- BODY - END -->
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div class="row">
+            <div class="col-12">
+              <div class="app-notes-item__footer">
+                <button
+                  type="reset"
+                  class="app-notes-item__footer__cancel-btn"
+                  (click)="form.reset()"
+                >
+                  Cancel
+                </button>
+                <button type="submit" class="app-notes-item__footer__save-btn">
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- CTA - END -->
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
