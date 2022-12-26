@@ -1,3 +1,14 @@
 <section class="app-header">
-  <p class="app-header__title">dylanotes</p>
+  <div class="row h-100 d-flex align-items-center">
+    <div class="col-4">
+      <i
+        class="fas fa-chevron-left app-header__back-icon"
+        *ngIf="input?.showGoBackIcon"
+        (click)="goBack()"
+      ></i>
+    </div>
+    <div class="col-4">
+      <span class="app-header__title">dylanotes</span>
+    </div>
+  </div>
 </section>

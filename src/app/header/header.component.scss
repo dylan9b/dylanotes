@@ -17,4 +17,10 @@
         margin: 0;
         color: $light;
     }
+
+    &__back-icon {
+        color: white;
+        margin-left: 15px;
+        cursor: pointer;
+    }
 }

@@ -6,4 +6,5 @@ export interface NoteItem {
     dateModified: Date;
     isComplete: boolean;
     isPinned: boolean;
+    isDeleted: boolean;
 }

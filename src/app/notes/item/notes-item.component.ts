@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { map, of, switchMap } from 'rxjs';
 import { DefaultComponent } from 'src/app/default-component/default-component';
+import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { NotesItemFormControl } from './_models/note-item-form-control.model';
 import { NotesItemValidation } from './_models/note-item-validation.model';
 import { NoteItem } from './_models/note-item.model';
@@ -16,6 +17,7 @@ export class NotesItemComponent extends DefaultComponent implements OnInit, OnDe
 
     form!: FormGroup;
     validation!: NotesItemValidation | null;
+    noteSteps = NotesStep;
 
     constructor(private route: ActivatedRoute, private formBuilder: FormBuilder) {
         super();
