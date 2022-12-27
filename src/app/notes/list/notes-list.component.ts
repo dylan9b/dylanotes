@@ -93,7 +93,7 @@ export class NotesListComponent {
     }
 
     addNote(): void {
-        this.notes = [{ ...{} as NoteItem, body: 'fg', id: 'fdgf', title: 'fdgf' }, ...this.notes];
+        this.notes = [{ ...{} as NoteItem, body: 'fg', id: 'fdgf', title: 'fdgf', dateCreated: new Date() }, ...this.notes];
     }
 
     removeNote(index: number): void {
@@ -117,14 +117,16 @@ export class NotesListComponent {
             ... {} as NoteItem,
             id: 'gfdghdfh',
             title: 'Lorem Ipsum -- title',
-            body: 'Lorem Ipsum -- body'
+            body: 'Lorem Ipsum -- body',
+            dateCreated: new Date()
         },
 
         {
             ... {} as NoteItem,
             id: 'gfdghdfh',
             title: 'Lorem Ipsum 2 -- title',
-            body: 'Lorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- body'
+            body: 'Lorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- body',
+            dateCreated: new Date()
         }];
     }
 
