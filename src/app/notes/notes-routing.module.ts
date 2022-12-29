@@ -23,7 +23,7 @@ const routes: Routes = [
             },
             {
                 path: 'new',
-                component: NotesItemComponent,
+                component: NotesItemComponent
             },
             {
                 path: ':id',

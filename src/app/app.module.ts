@@ -5,8 +5,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NotesRoutingModule } from './notes/notes-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
+import { ToastrModule } from 'ngx-toastr';
+import { ApiErrorService } from '@services/api-error.service';
 
 @NgModule({
     declarations: [
@@ -19,9 +22,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         ReactiveFormsModule,
         NotesRoutingModule,
         AppRoutingModule,
-        BrowserAnimationsModule
+        HttpClientModule,
+        BrowserAnimationsModule,
+        ToastrModule.forRoot(),
     ],
-    providers: [],
+    providers: [ApiErrorService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

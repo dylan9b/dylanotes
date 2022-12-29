@@ -1,33 +1,36 @@
-@import "./../../../custom-styles.scss";
+@import "custom-styles";
 
 .app-notes-list {
     &__add {
-        background-color: $purple;
-        border-radius: 5px;
-        border: 1px solid $purple;
-        color: white;
-        transition: 0.2s ease all;
-        padding: 15px 20px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-
-        i {
-            transition: 0.2s ease all;
-            margin-right: 15px;
-            color: white;
-        }
-
-        &:hover {
-            transition: 0.2s ease all;
-            color: $purple;
+        text-decoration: none;
+        button {
+            background-color: $purple;
+            border-radius: 5px;
             border: 1px solid $purple;
-            background: white;
+            color: white;
+            transition: 0.2s ease all;
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
 
             i {
+                transition: 0.2s ease all;
+                margin-right: 15px;
+                color: white;
+            }
+
+            &:hover {
+                transition: 0.2s ease all;
                 color: $purple;
+                border: 1px solid $purple;
+                background: white;
+
+                i {
+                    color: $purple;
+                }
             }
         }
     }

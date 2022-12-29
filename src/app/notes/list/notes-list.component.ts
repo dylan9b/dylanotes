@@ -1,7 +1,11 @@
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
+import { DefaultComponent } from 'src/app/default-component/default-component';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
-import { NoteItem } from '../item/_models/note-item.model';
+import { ApiErrorService } from '@services/api-error.service';
+import { NoteService } from '@services/note-service';
+import { INoteResponse } from '../item/_models/note-response.model';
 
 @Component({
     selector: 'app-notes-list',
@@ -84,16 +88,35 @@ import { NoteItem } from '../item/_models/note-item.model';
     ],
     encapsulation: ViewEncapsulation.None
 })
-export class NotesListComponent {
-    notes: NoteItem[] = [];
+export class NotesListComponent extends DefaultComponent implements OnInit, OnDestroy {
+    notes: INoteResponse[] = [];
     noteSteps = NotesStep;
 
-    constructor() {
-        this.notes = this.populateNoteItems();
+    constructor(private noteService: NoteService, private apiErrorService: ApiErrorService, private router: Router) {
+        super();
     }
 
-    addNote(): void {
-        this.notes = [{ ...{} as NoteItem, body: 'fg', id: 'fdgf', title: 'fdgf', dateCreated: new Date() }, ...this.notes];
+    override ngOnInit(): void {
+        super.ngOnInit();
+        this.getNotes();
+    }
+
+    override ngOnDestroy(): void {
+        super.ngOnDestroy();
+    }
+
+    getNotes(): void {
+        const notes$ = this.noteService.getNotes()
+            .subscribe({
+                next: (response) => {
+                    this.notes = response;
+                },
+                error: (error) => {
+                    this.apiErrorService.handleError(error);
+                }
+            });
+
+        this.subs.push(notes$);
     }
 
     removeNote(index: number): void {
@@ -111,23 +134,4 @@ export class NotesListComponent {
     completeNote(index: number): void {
         this.notes[index].isComplete = !this.notes[index]?.isComplete;
     }
-
-    private populateNoteItems(): NoteItem[] {
-        return [{
-            ... {} as NoteItem,
-            id: 'gfdghdfh',
-            title: 'Lorem Ipsum -- title',
-            body: 'Lorem Ipsum -- body',
-            dateCreated: new Date()
-        },
-
-        {
-            ... {} as NoteItem,
-            id: 'gfdghdfh',
-            title: 'Lorem Ipsum 2 -- title',
-            body: 'Lorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- bodyLorem Ipsum 2 -- body',
-            dateCreated: new Date()
-        }];
-    }
-
 }

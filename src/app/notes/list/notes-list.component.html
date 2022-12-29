@@ -25,7 +25,7 @@
               class="app-notes-list__item"
               [@deleteUndeleteState]="item?.isDeleted ? 'delete' : 'void'"
             >
-              <a [routerLink]="['/notes', item?.id]">
+              <a [routerLink]="['/notes', item?._id]">
                 <p class="app-notes-list__item__title">
                   {{ item?.title }}
                 </p>
@@ -71,14 +71,12 @@
 
         <div class="row">
           <div class="col-12 mt-3">
-            <button
-              type="button"
-              class="app-notes-list__add"
-              (click)="addNote()"
-            >
-              <i class="fas fa-plus"></i>
-              Add
-            </button>
+            <a [routerLink]="['/notes', 'new']" class="app-notes-list__add">
+              <button type="button">
+                <i class="fas fa-plus"></i>
+                Add
+              </button>
+            </a>
           </div>
         </div>
       </div>
