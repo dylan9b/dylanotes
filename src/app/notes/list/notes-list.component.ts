@@ -6,6 +6,7 @@ import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { ApiErrorService } from '@services/api-error.service';
 import { NoteService } from '@services/note-service';
 import { INoteResponse } from '../item/_models/note-response.model';
+import { INoteRequest } from '../item/_models/note-request.model';
 
 @Component({
     selector: 'app-notes-list',
@@ -119,16 +120,50 @@ export class NotesListComponent extends DefaultComponent implements OnInit, OnDe
         this.subs.push(notes$);
     }
 
-    removeNote(index: number): void {
-        this.notes[index].isDeleted = !this.notes[index]?.isDeleted;
+    removeNote(id: string): void {
+        const notes$ = this.noteService.deleteNote(id)
+            .subscribe({
+                next: (response) => {
+                    const index = this.notes.findIndex(n => n._id === response?._id);
 
-        setTimeout(() => {
-            this.notes.splice(index, 1);
-        }, 250);
+                    if (index > -1) {
+                        this.notes[index].isArchived = response?.isArchived;
+                        setTimeout(() => {
+
+                            this.notes.splice(index, 1);
+                        }, 250)
+                    }
+                },
+                error: (error) => {
+                    this.apiErrorService.handleError(error);
+                },
+            });
+
+        this.subs.push(notes$);
     }
 
-    pinNote(index: number): void {
-        this.notes[index].isPinned = !this.notes[index]?.isPinned;
+    pinNote(id: string, isPinned: boolean): void {
+        let request = {} as INoteRequest;
+        request = {
+            ...request,
+            _id: id,
+            isPinned: !isPinned
+        };
+
+        const pinNote$ = this.noteService.putNote(request).subscribe({
+            next: (response) => {
+                const index = this.notes.findIndex(n => n._id === response?._id);
+
+                if (index > -1) {
+                    this.notes[index].isPinned = response?.isPinned;
+                }
+            },
+            error: (error) => {
+                this.apiErrorService.handleError(error);
+            }
+        });
+
+        this.subs.push(pinNote$);
     }
 
     completeNote(index: number): void {

@@ -8,7 +8,6 @@ import { DefaultComponent } from 'src/app/default-component/default-component';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { NotesItemFormControl } from './_models/note-item-form-control.model';
 import { NotesItemValidation } from './_models/note-item-validation.model';
-import { NoteItem } from './_models/note-item.model';
 import { INoteRequest } from './_models/note-request.model';
 import { INoteResponse } from './_models/note-response.model';
 
@@ -130,17 +129,16 @@ export class NotesItemComponent extends DefaultComponent implements OnInit, OnDe
             title: rawForm?.title,
             body: rawForm?.body,
             isComplete: false,
-            isDeleted: false,
+            isArchived: false,
             isPinned: false
         };
 
         const newNote$ = this.noteService.postNote(newNote)
             .subscribe({
                 next: (response) => {
-                    this.router.navigate(['/notes', response?._id])
+                    this.router.navigate(['/notes', 'list'])
                 },
                 error: (error) => {
-                    debugger;
                     this.apiErrorService.handleError(error);
                 }
             });

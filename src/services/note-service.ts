@@ -31,7 +31,6 @@ export class NoteService {
         return this.http.get<{ data: INoteResponse }>(`${this.baseUrl}/notes/${id}`)
             .pipe(
                 map(response => {
-                    debugger;
                     return response?.data;
                 }),
                 catchError(error => {
@@ -41,10 +40,23 @@ export class NoteService {
     }
 
     postNote(request: INoteRequest): Observable<INoteResponse> {
-        return this.http.post(`${this.baseUrl}/notes/new`, request)
+        return this.http.post<{ data: INoteResponse }>(`${this.baseUrl}/notes/new`, request)
             .pipe(
                 map(response => {
-                    return response as INoteResponse;
+                    return response?.data;
+                }),
+                catchError(error => {
+                    throw error;
+                })
+            )
+    }
+
+    putNote(request: INoteRequest): Observable<INoteResponse> {
+        return this.http.put<{ data: INoteResponse }>(`${this.baseUrl}/notes/${request?._id}`, request)
+            .pipe(
+                map(response => {
+                    debugger;
+                    return response?.data;
                 }),
                 catchError(error => {
                     throw error;
@@ -53,10 +65,10 @@ export class NoteService {
     }
 
     deleteNote(id: string): Observable<INoteResponse> {
-        return this.http.delete(`${this.baseUrl}/notes/${id})`)
+        return this.http.delete<{ data: INoteResponse }>(`${this.baseUrl}/notes/${id}`, { body: { id: id } })
             .pipe(
                 map(response => {
-                    return response as INoteResponse;
+                    return response?.data;
                 }),
                 catchError(error => {
                     throw error;

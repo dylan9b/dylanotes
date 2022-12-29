@@ -23,7 +23,7 @@
           <div class="col-12 mt-3" *ngFor="let item of notes; index as i">
             <div
               class="app-notes-list__item"
-              [@deleteUndeleteState]="item?.isDeleted ? 'delete' : 'void'"
+              [@deleteUndeleteState]="item?.isArchived ? 'delete' : 'void'"
             >
               <a [routerLink]="['/notes', item?._id]">
                 <p class="app-notes-list__item__title">
@@ -35,7 +35,7 @@
               </a>
               <span
                 class="app-notes-list__item__remove"
-                (click)="removeNote(i)"
+                (click)="removeNote(item._id)"
               >
                 <i class="fas fa-x"></i>
               </span>
@@ -45,7 +45,7 @@
                   class="col-12 d-flex align-items-center justify-content-between"
                 >
                   <i
-                    (click)="pinNote(i)"
+                    (click)="pinNote(item._id, item.isPinned)"
                     [@pinUnpin]="item?.isPinned ? 'pinned' : 'unPinned'"
                     class="fa-sharp fa-solid fa-thumbtack"
                   ></i>

@@ -4,17 +4,9 @@ var ObjectId = require('mongoose').Types.ObjectId;
 
 var { Note } = require('../models/note.model');
 
-// => localhost:3000/notes/
-// router.route('/list').get((req, res) => {
-//     Note.find((err, docs) => {
-//         if (!err) { res.send({ data: docs }); }
-//         else { console.log('Error in Retriving Notes :' + JSON.stringify(err, undefined, 2)); }
-//     });
-// });
-
 // Get all notes
 router.route('/list').get((req, res, next) => {
-    Note.find((error, data) => {
+    Note.find({ isArchived: false }, (error, data) => {
         if (error) {
             return next(error);
         } else {
@@ -23,7 +15,7 @@ router.route('/list').get((req, res, next) => {
     });
 });
 
-// Get note by id
+// Get note
 router.route('/:id').get((req, res, next) => {
     Note.findById(req.params.id, (error, data) => {
         if (error) {
@@ -45,10 +37,8 @@ router.route('/new').post((req, res, next) => {
     });
 });
 
-router.put('/:id', (req, res) => {
-    if (!ObjectId.isValid(req.params.id))
-        return res.status(400).send(`No record with given id : ${req.params.id}`);
-
+// Update a note
+router.route('/:id').put((req, res, next) => {
     var note = {
         title: req.body.title,
         body: req.body.body,
@@ -57,19 +47,23 @@ router.put('/:id', (req, res) => {
         isArchived: req.body.isArchived,
         dateModified: new Date(),
     };
-    Note.findByIdAndUpdate(req.params.id, { $set: note }, { new: true }, (err, doc) => {
-        if (!err) { res.send(doc); }
-        else { console.log('Error in Note Update :' + JSON.stringify(err, undefined, 2)); }
+    Note.findByIdAndUpdate(req.params.id, { $set: note }, { new: true }, (error, data) => {
+        if (error) {
+            return next(error);
+        } else {
+            res.json({ data: data });
+        }
     });
 });
 
-router.delete('/:id', (req, res) => {
-    if (!ObjectId.isValid(req.params.id))
-        return res.status(400).send(`No record with given id : ${req.params.id}`);
-
-    Note.findByIdAndRemove(req.params.id, (err, doc) => {
-        if (!err) { res.send(doc); }
-        else { console.log('Error in Note Delete :' + JSON.stringify(err, undefined, 2)); }
+// Delete note (soft delete)
+router.route('/:id').delete((req, res, next) => {
+    Note.findByIdAndUpdate(req.params.id, { $set: { isArchived: true } }, { new: true }, (error, data) => {
+        if (error) {
+            return next(error);
+        } else {
+            res.json({ data: data });
+        }
     });
 });
 

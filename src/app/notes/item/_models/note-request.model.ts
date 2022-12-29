@@ -6,5 +6,5 @@ export interface INoteRequest {
     dateModified: Date;
     isComplete: boolean;
     isPinned: boolean;
-    isDeleted: boolean;
+    isArchived: boolean;
 }

@@ -6,5 +6,5 @@ export interface INoteResponse {
     dateModified: Date;
     isComplete: boolean;
     isPinned: boolean;
-    isDeleted: boolean;
+    isArchived: boolean;
 }
