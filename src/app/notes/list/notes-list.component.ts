@@ -92,6 +92,7 @@ import { INoteRequest } from '../item/_models/note-request.model';
 export class NotesListComponent extends DefaultComponent implements OnInit, OnDestroy {
     notes: INoteResponse[] = [];
     noteSteps = NotesStep;
+    isEmptyResult: boolean = false;
 
     constructor(private noteService: NoteService, private apiErrorService: ApiErrorService, private router: Router) {
         super();
@@ -107,13 +108,13 @@ export class NotesListComponent extends DefaultComponent implements OnInit, OnDe
     }
 
     getNotes(input?: Event): void {
-        debugger;
         const searchTerm = (input?.target as HTMLInputElement)?.value || '';
 
         const notes$ = this.noteService.getNotes(searchTerm)
             .subscribe({
                 next: (response) => {
                     this.notes = response;
+                    this.isEmptyResult = this.notes?.length === 0 && searchTerm?.length > 0;
                 },
                 error: (error) => {
                     this.apiErrorService.handleError(error);
@@ -131,8 +132,8 @@ export class NotesListComponent extends DefaultComponent implements OnInit, OnDe
 
                     if (index > -1) {
                         this.notes[index].isArchived = response?.isArchived;
-                        setTimeout(() => {
 
+                        setTimeout(() => {
                             this.notes.splice(index, 1);
                         }, 250)
                     }

@@ -20,7 +20,7 @@
           </div>
         </div>
 
-        <div class="row app-notes-list__items">
+        <div class="row app-notes-list__items" *ngIf="notes?.length">
           <div class="col-12 mt-3" *ngFor="let item of notes; index as i">
             <div
               class="app-notes-list__item"
@@ -67,6 +67,12 @@
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div *ngIf="isEmptyResult">
+          <div class="col-12 mt-3">
+            <div class="alert alert-info" role="alert">No notes found.</div>
           </div>
         </div>
 
