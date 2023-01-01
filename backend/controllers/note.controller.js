@@ -1,18 +1,34 @@
 const express = require('express');
 var router = express.Router();
-var ObjectId = require('mongoose').Types.ObjectId;
 
 var { Note } = require('../models/note.model');
 
 // Get all notes
 router.route('/list').get((req, res, next) => {
-    Note.find({ isArchived: false }, (error, data) => {
-        if (error) {
-            return next(error);
-        } else {
-            res.json({ data: data });
-        }
-    });
+    if (req?.query?.searchTerm?.length) {
+        Note.find(
+            {
+                isArchived: false,
+                $or: [
+                    { 'title': { '$regex': req?.query?.searchTerm?.toLowerCase(), '$options': 'i' } },
+                    { 'body': { '$regex': req?.query?.searchTerm?.toLowerCase(), '$options': 'i' } }
+                ]
+            }, (error, data) => {
+                if (error) {
+                    return next(error);
+                } else {
+                    res.json({ data: data });
+                }
+            });
+    } else {
+        Note.find({ isArchived: false }, (error, data) => {
+            if (error) {
+                return next(error);
+            } else {
+                res.json({ data: data });
+            }
+        });
+    }
 });
 
 // Get note

@@ -15,8 +15,8 @@ export class NoteService {
         this.baseUrl = `${environment.BASE_URL}/api`
     }
 
-    getNotes(): Observable<INoteResponse[]> {
-        return this.http.get<{ data: INoteResponse[] }>(`${this.baseUrl}/notes/list`)
+    getNotes(searchTerm?: string): Observable<INoteResponse[]> {
+        return this.http.get<{ data: INoteResponse[] }>(`${this.baseUrl}/notes/list`, { params: { searchTerm: searchTerm as string } })
             .pipe(
                 map(response => {
                     return response?.data;
@@ -55,7 +55,6 @@ export class NoteService {
         return this.http.put<{ data: INoteResponse }>(`${this.baseUrl}/notes/${request?._id}`, request)
             .pipe(
                 map(response => {
-                    debugger;
                     return response?.data;
                 }),
                 catchError(error => {

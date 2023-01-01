@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiErrorService } from '@services/api-error.service';
@@ -14,7 +14,8 @@ import { INoteResponse } from './_models/note-response.model';
 @Component({
     selector: 'app-notes-item',
     templateUrl: './notes-item.component.html',
-    styleUrls: ['./notes-item.component.scss']
+    styleUrls: ['./notes-item.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class NotesItemComponent extends DefaultComponent implements OnInit, OnDestroy {
 
@@ -22,6 +23,7 @@ export class NotesItemComponent extends DefaultComponent implements OnInit, OnDe
     validation!: NotesItemValidation | null;
     noteSteps = NotesStep;
     isEdit!: boolean;
+    note!: INoteResponse | null;
 
     constructor(
         private route: ActivatedRoute,
@@ -80,8 +82,8 @@ export class NotesItemComponent extends DefaultComponent implements OnInit, OnDe
             )
             .subscribe({
                 next: (response) => {
-                    console.log('response', response);
                     this.isEdit = response?.isEdit;
+                    this.note = response?.note;
                     this.initForm(response?.note);
                 },
 
@@ -112,6 +114,8 @@ export class NotesItemComponent extends DefaultComponent implements OnInit, OnDe
 
             if (!this.isEdit) {
                 this.addNote();
+            } else {
+                this.editNote();
             }
 
 
@@ -128,6 +132,7 @@ export class NotesItemComponent extends DefaultComponent implements OnInit, OnDe
             ...newNote,
             title: rawForm?.title,
             body: rawForm?.body,
+            dateCreated: new Date(),
             isComplete: false,
             isArchived: false,
             isPinned: false
@@ -135,7 +140,7 @@ export class NotesItemComponent extends DefaultComponent implements OnInit, OnDe
 
         const newNote$ = this.noteService.postNote(newNote)
             .subscribe({
-                next: (response) => {
+                next: () => {
                     this.router.navigate(['/notes', 'list'])
                 },
                 error: (error) => {
@@ -144,5 +149,32 @@ export class NotesItemComponent extends DefaultComponent implements OnInit, OnDe
             });
 
         this.subs.push(newNote$);
+    }
+
+    private editNote(): void {
+        const rawForm = this.form.getRawValue();
+
+        let newNote = {} as INoteRequest;
+        newNote = {
+            ...this.note as INoteRequest,
+            title: rawForm?.title,
+            body: rawForm?.body,
+            dateModified: new Date(),
+            // isComplete: false,
+            // isArchived: false,
+            // isPinned: false
+        };
+
+        const editNote$ = this.noteService.putNote(newNote)
+            .subscribe({
+                next: () => {
+                    // this.router.navigate(['/notes', 'list'])
+                },
+                error: (error) => {
+                    this.apiErrorService.handleError(error);
+                }
+            });
+
+        this.subs.push(editNote$);
     }
 }

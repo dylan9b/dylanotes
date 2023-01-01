@@ -12,7 +12,7 @@ $link: $vivid-sky-blue;
 html,
 body {
     overflow: hidden;
-    background: $light;
+    background-color: $light;
 
     font-family: $family-sans-serif;
 
@@ -20,7 +20,7 @@ body {
         padding-left: 2.5em;
         border-radius: 50px;
         box-shadow: none;
-        background: #ececec66;
+        background-color: #ececec66;
         transition: 0.3s ease all;
 
         &:focus {

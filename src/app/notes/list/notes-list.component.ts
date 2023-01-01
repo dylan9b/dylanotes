@@ -106,8 +106,11 @@ export class NotesListComponent extends DefaultComponent implements OnInit, OnDe
         super.ngOnDestroy();
     }
 
-    getNotes(): void {
-        const notes$ = this.noteService.getNotes()
+    getNotes(input?: Event): void {
+        debugger;
+        const searchTerm = (input?.target as HTMLInputElement)?.value || '';
+
+        const notes$ = this.noteService.getNotes(searchTerm)
             .subscribe({
                 next: (response) => {
                     this.notes = response;
@@ -142,12 +145,12 @@ export class NotesListComponent extends DefaultComponent implements OnInit, OnDe
         this.subs.push(notes$);
     }
 
-    pinNote(id: string, isPinned: boolean): void {
+    pinNote(note: INoteResponse): void {
         let request = {} as INoteRequest;
         request = {
             ...request,
-            _id: id,
-            isPinned: !isPinned
+            _id: note?._id,
+            isPinned: !note?.isPinned
         };
 
         const pinNote$ = this.noteService.putNote(request).subscribe({
@@ -166,7 +169,27 @@ export class NotesListComponent extends DefaultComponent implements OnInit, OnDe
         this.subs.push(pinNote$);
     }
 
-    completeNote(index: number): void {
-        this.notes[index].isComplete = !this.notes[index]?.isComplete;
+    completeNote(note: INoteResponse): void {
+        let request = {} as INoteRequest;
+        request = {
+            ...request,
+            _id: note?._id,
+            isComplete: !note?.isComplete
+        };
+
+        const completeNote$ = this.noteService.putNote(request).subscribe({
+            next: (response) => {
+                const index = this.notes.findIndex(n => n._id === response?._id);
+
+                if (index > -1) {
+                    this.notes[index].isComplete = response?.isComplete;
+                }
+            },
+            error: (error) => {
+                this.apiErrorService.handleError(error);
+            }
+        });
+
+        this.subs.push(completeNote$);
     }
 }
