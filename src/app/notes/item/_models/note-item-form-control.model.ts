@@ -4,6 +4,8 @@ export class NotesItemFormControl {
     constructor(
         public id: FormControl = new FormControl(null),
         public title: FormControl = new FormControl(null, [Validators.required]),
-        public body: FormControl = new FormControl(null, [Validators.required])
+        public body: FormControl = new FormControl(null, [Validators.required]),
+        public isComplete: FormControl = new FormControl(null, [Validators.required]),
+        public isPinned: FormControl = new FormControl(null, [Validators.required]),
     ) { }
 }

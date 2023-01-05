@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiErrorService } from '@services/api-error.service';
 import { NoteService } from '@services/note-service';
 import { map, of, switchMap } from 'rxjs';
+import { Animations } from 'src/app/animations/animations';
 import { DefaultComponent } from 'src/app/default-component/default-component';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { NotesItemFormControl } from './_models/note-item-form-control.model';
@@ -15,7 +16,11 @@ import { INoteResponse } from './_models/note-response.model';
     selector: 'app-notes-item',
     templateUrl: './notes-item.component.html',
     styleUrls: ['./notes-item.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations: [
+        Animations.pinUnpin,
+        Animations.completeIncomplete
+    ]
 })
 export class NotesItemComponent extends DefaultComponent implements OnInit, OnDestroy {
 
@@ -160,9 +165,8 @@ export class NotesItemComponent extends DefaultComponent implements OnInit, OnDe
             title: rawForm?.title,
             body: rawForm?.body,
             dateModified: new Date(),
-            // isComplete: false,
-            // isArchived: false,
-            // isPinned: false
+            isComplete: rawForm?.isComplete,
+            isPinned: rawForm?.isPinned
         };
 
         const editNote$ = this.noteService.putNote(newNote)
@@ -176,5 +180,49 @@ export class NotesItemComponent extends DefaultComponent implements OnInit, OnDe
             });
 
         this.subs.push(editNote$);
+    }
+
+    pinNote(note: INoteResponse | null): void {
+        if (note) {
+            let request = {} as INoteRequest;
+            request = {
+                ...request,
+                _id: note?._id,
+                isPinned: !note?.isPinned
+            };
+
+            const pinNote$ = this.noteService.putNote(request).subscribe({
+                next: (response) => {
+                    this.note = response;
+                },
+                error: (error) => {
+                    this.apiErrorService.handleError(error);
+                }
+            });
+
+            this.subs.push(pinNote$);
+        }
+    }
+
+    completeNote(note: INoteResponse | null): void {
+        if (note) {
+            let request = {} as INoteRequest;
+            request = {
+                ...request,
+                _id: note?._id,
+                isComplete: !note?.isComplete
+            };
+
+            const completeNote$ = this.noteService.putNote(request).subscribe({
+                next: (response) => {
+                    this.note = response;
+                },
+                error: (error) => {
+                    this.apiErrorService.handleError(error);
+                }
+            });
+
+            this.subs.push(completeNote$);
+        }
     }
 }

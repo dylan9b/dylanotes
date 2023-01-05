@@ -1,4 +1,3 @@
-import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { DefaultComponent } from 'src/app/default-component/default-component';
@@ -7,85 +6,16 @@ import { ApiErrorService } from '@services/api-error.service';
 import { NoteService } from '@services/note-service';
 import { INoteResponse } from '../item/_models/note-response.model';
 import { INoteRequest } from '../item/_models/note-request.model';
+import { Animations } from 'src/app/animations/animations';
 
 @Component({
     selector: 'app-notes-list',
     templateUrl: './notes-list.component.html',
     styleUrls: ['./notes-list.component.scss'],
     animations: [
-        trigger('pinUnpin', [
-            state('pinned', style({
-                opacity: '1',
-                transform: 'scale(1.1)',
-                color: '#fe76c2'
-            })),
-            state('unPinned', style({
-                opacity: '1',
-                transform: 'scale(1.1)',
-                color: '#cccccc'
-            })),
-            state('*', style({
-                color: '#cccccc',
-                transform: 'scale(1.1)',
-            })),
-            transition('pinned => unPinned', [
-                style({
-                    transform: 'scale(0)',
-                    opacity: '0',
-                }),
-                animate('0.15s')
-            ]),
-            transition('unPinned => pinned', [
-                style({
-                    transform: 'scale(0)',
-                    opacity: '0',
-                }),
-                animate('0.15s'),
-            ]),
-        ]),
-
-        trigger('completeIncomplete', [
-            state('complete', style({
-                opacity: '1',
-                transform: 'scale(1.1)',
-                color: '#3bb273'
-            })),
-            state('inComplete', style({
-                opacity: '1',
-                transform: 'scale(1.1)',
-                color: '#cccccc'
-            })),
-            state('*', style({
-                color: '#cccccc',
-                transform: 'scale(1.1)',
-            })),
-            transition('complete => inComplete', [
-                style({
-                    transform: 'scale(0)',
-                    opacity: '0',
-                }),
-                animate('0.15s')
-            ]),
-            transition('inComplete => complete', [
-                style({
-                    transform: 'scale(0)',
-                    opacity: '0',
-                }),
-                animate('0.15s'),
-            ]),
-        ]),
-
-        trigger('deleteUndeleteState', [
-            state('delete', style({
-                opacity: '0',
-            })),
-            transition('void => delete', [
-                style({
-                    opacity: '1',
-                }),
-                animate('0.25s')
-            ]),
-        ]),
+        Animations.pinUnpin,
+        Animations.completeIncomplete,
+        Animations.delete
     ],
     encapsulation: ViewEncapsulation.None
 })
