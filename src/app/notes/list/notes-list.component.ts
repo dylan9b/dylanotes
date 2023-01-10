@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { Router } from '@angular/router';
 import { DefaultComponent } from 'src/app/default-component/default-component';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { ApiErrorService } from '@services/api-error.service';
@@ -24,7 +23,7 @@ export class NotesListComponent extends DefaultComponent implements OnInit, OnDe
     noteSteps = NotesStep;
     isEmptyResult: boolean = false;
 
-    constructor(private noteService: NoteService, private apiErrorService: ApiErrorService, private router: Router) {
+    constructor(private noteService: NoteService, private apiErrorService: ApiErrorService) {
         super();
     }
 
