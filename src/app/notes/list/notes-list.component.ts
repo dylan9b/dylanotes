@@ -6,120 +6,138 @@ import { NoteService } from '@services/note-service';
 import { INoteResponse } from '../item/_models/note-response.model';
 import { INoteRequest } from '../item/_models/note-request.model';
 import { Animations } from 'src/app/animations/animations';
+import { delay } from 'rxjs';
 
 @Component({
-    selector: 'app-notes-list',
-    templateUrl: './notes-list.component.html',
-    styleUrls: ['./notes-list.component.scss'],
-    animations: [
-        Animations.pinUnpin,
-        Animations.completeIncomplete,
-        Animations.delete
-    ],
-    encapsulation: ViewEncapsulation.None
+  selector: 'app-notes-list',
+  templateUrl: './notes-list.component.html',
+  styleUrls: ['./notes-list.component.scss'],
+  animations: [
+    Animations.pinUnpin,
+    Animations.completeIncomplete,
+    Animations.delete,
+  ],
+  encapsulation: ViewEncapsulation.None,
 })
-export class NotesListComponent extends DefaultComponent implements OnInit, OnDestroy {
-    notes: INoteResponse[] = [];
-    noteSteps = NotesStep;
-    isEmptyResult: boolean = false;
+export class NotesListComponent
+  extends DefaultComponent
+  implements OnInit, OnDestroy
+{
+  notes: INoteResponse[] = [];
+  noteSteps = NotesStep;
+  isEmptyResult: boolean = false;
+  isLoading: boolean = false;
 
-    constructor(private noteService: NoteService, private apiErrorService: ApiErrorService) {
-        super();
-    }
+  constructor(
+    private noteService: NoteService,
+    private apiErrorService: ApiErrorService
+  ) {
+    super();
+  }
 
-    override ngOnInit(): void {
-        super.ngOnInit();
-        this.getNotes();
-    }
+  override ngOnInit(): void {
+    super.ngOnInit();
+    this.getNotes();
+  }
 
-    override ngOnDestroy(): void {
-        super.ngOnDestroy();
-    }
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+  }
 
-    getNotes(input?: Event): void {
-        const searchTerm = (input?.target as HTMLInputElement)?.value || '';
+  getNotes(delayTime?: number, input?: Event, isFilterApplied?: boolean): void {
+    delayTime = delayTime || 0;
+    isFilterApplied = isFilterApplied || false;
+    isFilterApplied ? (this.isLoading = true) : (this.isLoading = false);
 
-        const notes$ = this.noteService.getNotes(searchTerm)
-            .subscribe({
-                next: (response) => {
-                    this.notes = response;
-                    this.isEmptyResult = this.notes?.length === 0 && searchTerm?.length > 0;
-                },
-                error: (error) => {
-                    this.apiErrorService.handleError(error);
-                }
-            });
+    const searchTerm = (input?.target as HTMLInputElement)?.value || '';
 
-        this.subs.push(notes$);
-    }
+    const notes$ = this.noteService
+      .getNotes(searchTerm)
+      .pipe(delay(delayTime))
+      .subscribe({
+        next: (response) => {
+          this.notes = response;
+          this.isEmptyResult =
+            this.notes?.length === 0 && searchTerm?.length > 0;
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.apiErrorService.handleError(error);
+        },
+        complete: () => {
+          this.isLoading = false;
+        },
+      });
 
-    removeNote(id: string): void {
-        const notes$ = this.noteService.deleteNote(id)
-            .subscribe({
-                next: (response) => {
-                    const index = this.notes.findIndex(n => n._id === response?._id);
+    this.subs.push(notes$);
+  }
 
-                    if (index > -1) {
-                        this.notes[index].isArchived = response?.isArchived;
+  removeNote(id: string): void {
+    const notes$ = this.noteService.deleteNote(id).subscribe({
+      next: (response) => {
+        const index = this.notes.findIndex((n) => n._id === response?._id);
 
-                        setTimeout(() => {
-                            this.notes.splice(index, 1);
-                        }, 250)
-                    }
-                },
-                error: (error) => {
-                    this.apiErrorService.handleError(error);
-                },
-            });
+        if (index > -1) {
+          this.notes[index].isArchived = response?.isArchived;
 
-        this.subs.push(notes$);
-    }
+          setTimeout(() => {
+            this.notes.splice(index, 1);
+          }, 250);
+        }
+      },
+      error: (error) => {
+        this.apiErrorService.handleError(error);
+      },
+    });
 
-    pinNote(note: INoteResponse): void {
-        let request = {} as INoteRequest;
-        request = {
-            ...request,
-            _id: note?._id,
-            isPinned: !note?.isPinned
-        };
+    this.subs.push(notes$);
+  }
 
-        const pinNote$ = this.noteService.putNote(request).subscribe({
-            next: (response) => {
-                const index = this.notes.findIndex(n => n._id === response?._id);
+  pinNote(note: INoteResponse): void {
+    let request = {} as INoteRequest;
+    request = {
+      ...request,
+      _id: note?._id,
+      isPinned: !note?.isPinned,
+    };
 
-                if (index > -1) {
-                    this.notes[index].isPinned = response?.isPinned;
-                }
-            },
-            error: (error) => {
-                this.apiErrorService.handleError(error);
-            }
-        });
+    const pinNote$ = this.noteService.putNote(request).subscribe({
+      next: (response) => {
+        const index = this.notes.findIndex((n) => n._id === response?._id);
 
-        this.subs.push(pinNote$);
-    }
+        if (index > -1) {
+          this.notes[index].isPinned = response?.isPinned;
+        }
+      },
+      error: (error) => {
+        this.apiErrorService.handleError(error);
+      },
+    });
 
-    completeNote(note: INoteResponse): void {
-        let request = {} as INoteRequest;
-        request = {
-            ...request,
-            _id: note?._id,
-            isComplete: !note?.isComplete
-        };
+    this.subs.push(pinNote$);
+  }
 
-        const completeNote$ = this.noteService.putNote(request).subscribe({
-            next: (response) => {
-                const index = this.notes.findIndex(n => n._id === response?._id);
+  completeNote(note: INoteResponse): void {
+    let request = {} as INoteRequest;
+    request = {
+      ...request,
+      _id: note?._id,
+      isComplete: !note?.isComplete,
+    };
 
-                if (index > -1) {
-                    this.notes[index].isComplete = response?.isComplete;
-                }
-            },
-            error: (error) => {
-                this.apiErrorService.handleError(error);
-            }
-        });
+    const completeNote$ = this.noteService.putNote(request).subscribe({
+      next: (response) => {
+        const index = this.notes.findIndex((n) => n._id === response?._id);
 
-        this.subs.push(completeNote$);
-    }
+        if (index > -1) {
+          this.notes[index].isComplete = response?.isComplete;
+        }
+      },
+      error: (error) => {
+        this.apiErrorService.handleError(error);
+      },
+    });
+
+    this.subs.push(completeNote$);
+  }
 }

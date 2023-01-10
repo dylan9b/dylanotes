@@ -107,9 +107,15 @@ export class NotesItemComponent extends DefaultComponent implements OnInit, OnDe
             control.id.setValue(note?._id);
             control.title.setValue(note?.title);
             control.body.setValue(note?.body);
+            control.isComplete.setValue(note?.isComplete);
+            control.isPinned.setValue(note?.isPinned);
         }
 
         this.form = this.formBuilder?.group(control);
+    }
+
+    cancelForm(): void {
+        this.initForm(this.note);
     }
 
     submitForm(): void {

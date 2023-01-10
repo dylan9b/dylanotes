@@ -1,6 +1,4 @@
-<app-header
-  [input]="{ showGoBackIcon: false, step: noteSteps.LIST }"
-></app-header>
+<app-header [input]="{ showGoBackIcon: false, step: noteSteps.LIST }"></app-header>
 
 <section class="app-notes-list">
   <div class="container">
@@ -10,22 +8,15 @@
           <div class="col-12">
             <span class="app-notes-list__filter__container">
               <i class="fas fa-search"></i>
-              <input
-                type="text"
-                class="form-control app-notes-input"
-                placeholder="Filter notes"
-                (keyup.enter)="getNotes($event)"
-              />
+              <input type="text" class="form-control app-notes-input" placeholder="Filter notes"
+                (input)="getNotes(500, $event, true)" />
             </span>
           </div>
         </div>
 
-        <div class="row app-notes-list__items" *ngIf="notes?.length">
+        <div class="row app-notes-list__items" *ngIf="!isLoading">
           <div class="col-12 mt-3" *ngFor="let item of notes; index as i">
-            <div
-              class="app-notes-list__item"
-              [@deleteUndeleteState]="item?.isArchived ? 'delete' : 'void'"
-            >
+            <div class="app-notes-list__item" [@deleteUndeleteState]="item?.isArchived ? 'delete' : 'void'">
               <a [routerLink]="['/notes', item?._id]">
                 <p class="app-notes-list__item__title">
                   {{ item?.title }}
@@ -34,30 +25,18 @@
                   <p>{{ item?.body }}</p>
                 </div>
               </a>
-              <span
-                class="app-notes-list__item__remove"
-                (click)="removeNote(item._id)"
-              >
+              <span class="app-notes-list__item__remove" (click)="removeNote(item._id)">
                 <i class="fas fa-x"></i>
               </span>
 
               <div class="row">
-                <div
-                  class="col-12 d-flex align-items-center justify-content-between"
-                >
-                  <i
-                    (click)="pinNote(item)"
-                    [@pinUnpin]="item?.isPinned ? 'pinned' : 'unPinned'"
-                    class="fa-sharp fa-solid fa-thumbtack"
-                  ></i>
+                <div class="col-12 d-flex align-items-center justify-content-between">
+                  <i (click)="pinNote(item)" [@pinUnpin]="item?.isPinned ? 'pinned' : 'unPinned'"
+                    class="fa-sharp fa-solid fa-thumbtack"></i>
 
-                  <i
-                    (click)="completeNote(item)"
-                    [@completeIncomplete]="
+                  <i (click)="completeNote(item)" [@completeIncomplete]="
                       item?.isComplete ? 'complete' : 'inComplete'
-                    "
-                    class="fa-solid fa-circle-check"
-                  ></i>
+                    " class="fa-solid fa-circle-check"></i>
                 </div>
 
                 <div class="app-notes-list__item__footer">
@@ -70,13 +49,19 @@
           </div>
         </div>
 
-        <div *ngIf="isEmptyResult">
+        <div *ngIf="!isLoading && isEmptyResult">
           <div class="col-12 mt-3">
             <div class="alert alert-info" role="alert">No notes found.</div>
           </div>
         </div>
 
-        <div class="row">
+        <div *ngIf="isLoading">
+          <div class="col-12 mt-3 text-center">
+            <div class="spinner-border app-notes-list__spinner" role="status"></div>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="!isLoading">
           <div class="col-12 mt-3">
             <a [routerLink]="['/notes', 'new']" class="app-notes-list__add">
               <button type="button">

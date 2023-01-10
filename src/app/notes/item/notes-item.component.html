@@ -7,7 +7,7 @@
     <form *ngIf="form" [formGroup]="form" (ngSubmit)="submitForm()">
       <div class="row mt-3 py-2">
         <div class="col-12 col-lg-4 mx-auto app-notes-item__content-wrapper">
-          <div class="row mb-4">
+          <div class="row mb-4" *ngIf="isEdit">
             <div
               class="col-12 d-flex align-items-center justify-content-between"
             >
@@ -87,9 +87,9 @@
             <div class="col-12">
               <div class="app-notes-item__footer">
                 <button
-                  type="reset"
+                  [type]="isEdit ? 'button' : 'reset'"
                   class="app-notes-item__footer__cancel-btn"
-                  (click)="form.reset()"
+                  (click)="cancelForm()"
                 >
                   Cancel
                 </button>
