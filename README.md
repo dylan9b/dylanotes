@@ -26,3 +26,8 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
 # dylanotes
+
+## Running instance locally on mobile and on other devices
+### angular.json -> serve -> options -> set 'port' and 'host' attributes
+### index.js -> set current ip address
+### environmet -> set the BASE_URL to the current ip address

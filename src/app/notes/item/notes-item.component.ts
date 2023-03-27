@@ -13,222 +13,216 @@ import { INoteRequest } from './_models/note-request.model';
 import { INoteResponse } from './_models/note-response.model';
 
 @Component({
-    selector: 'app-notes-item',
-    templateUrl: './notes-item.component.html',
-    styleUrls: ['./notes-item.component.scss'],
-    encapsulation: ViewEncapsulation.None,
-    animations: [
-        Animations.pinUnpin,
-        Animations.completeIncomplete
-    ]
+  selector: 'app-notes-item',
+  templateUrl: './notes-item.component.html',
+  styleUrls: ['./notes-item.component.scss'],
+  encapsulation: ViewEncapsulation.None,
+  animations: [Animations.pinUnpin, Animations.completeIncomplete],
 })
-export class NotesItemComponent extends DefaultComponent implements OnInit, OnDestroy {
+export class NotesItemComponent
+  extends DefaultComponent
+  implements OnInit, OnDestroy
+{
+  form!: FormGroup;
+  validation!: NotesItemValidation | null;
+  noteSteps = NotesStep;
+  isEdit!: boolean;
+  note!: INoteResponse | null;
 
-    form!: FormGroup;
-    validation!: NotesItemValidation | null;
-    noteSteps = NotesStep;
-    isEdit!: boolean;
-    note!: INoteResponse | null;
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private formBuilder: FormBuilder,
+    private noteService: NoteService,
+    private apiErrorService: ApiErrorService
+  ) {
+    super();
+  }
 
-    constructor(
-        private route: ActivatedRoute,
-        private router: Router,
-        private formBuilder: FormBuilder,
-        private noteService: NoteService,
-        private apiErrorService: ApiErrorService) {
-        super();
-    }
+  override ngOnInit(): void {
+    super.ngOnInit();
+    this.subscribeRouteParams();
+  }
 
-    override ngOnInit(): void {
-        super.ngOnInit();
-        this.subscribeRouteParams();
-    }
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+  }
 
-    override ngOnDestroy(): void {
-        super.ngOnDestroy();
-    }
-
-    private subscribeRouteParams(): void {
-        const route$ = this.route?.params
-            .pipe(
-                map(params => {
-                    const { id } = params;
-                    return id as string;
-                }),
-                switchMap(id => {
-                    if (id) {
-                        return of({
-                            isEdit: true,
-                            id
-                        });
-                    } else {
-                        return of({
-                            isEdit: false,
-                            id: null
-                        });
-                    }
-                }),
-                switchMap(response => {
-                    const { id, isEdit } = response;
-                    if (isEdit && id) {
-                        return this.noteService.getNote(id)
-                            .pipe(
-                                map(note => {
-                                    return {
-                                        note,
-                                        isEdit
-                                    }
-                                })
-                            )
-                    }
-
-                    return of({ note: null, isEdit: false });
-                })
-            )
-            .subscribe({
-                next: (response) => {
-                    this.isEdit = response?.isEdit;
-                    this.note = response?.note;
-                    this.initForm(response?.note);
-                },
-
-                error: (error) => {
-                    this.apiErrorService.handleError(error);
-                }
+  private subscribeRouteParams(): void {
+    const route$ = this.route?.params
+      .pipe(
+        map((params) => {
+          const { id } = params;
+          return id as string;
+        }),
+        switchMap((id) => {
+          if (id) {
+            return of({
+              isEdit: true,
+              id,
             });
-
-        this.subs?.push(route$);
-    }
-
-    private initForm(note?: INoteResponse | null): void {
-        let control = new NotesItemFormControl();
-
-        if (note) {
-            control.id.setValue(note?._id);
-            control.title.setValue(note?.title);
-            control.body.setValue(note?.body);
-            control.isComplete.setValue(note?.isComplete);
-            control.isPinned.setValue(note?.isPinned);
-        }
-
-        this.form = this.formBuilder?.group(control);
-    }
-
-    cancelForm(): void {
-        this.initForm(this.note);
-    }
-
-    submitForm(): void {
-        this.validation = new NotesItemValidation(this.form);
-
-        if (this.form?.valid) {
-
-            if (!this.isEdit) {
-                this.addNote();
-            } else {
-                this.editNote();
-            }
-
-
-        } else {
-            this.form?.markAllAsTouched();
-        }
-    }
-
-    private addNote(): void {
-        const rawForm = this.form.getRawValue();
-
-        let newNote = {} as INoteRequest;
-        newNote = {
-            ...newNote,
-            title: rawForm?.title,
-            body: rawForm?.body,
-            dateCreated: new Date(),
-            isComplete: false,
-            isArchived: false,
-            isPinned: false
-        };
-
-        const newNote$ = this.noteService.postNote(newNote)
-            .subscribe({
-                next: () => {
-                    this.router.navigate(['/notes', 'list'])
-                },
-                error: (error) => {
-                    this.apiErrorService.handleError(error);
-                }
+          } else {
+            return of({
+              isEdit: false,
+              id: null,
             });
+          }
+        }),
+        switchMap((response) => {
+          const { id, isEdit } = response;
+          if (isEdit && id) {
+            return this.noteService.getNote(id).pipe(
+              map((note) => {
+                return {
+                  note,
+                  isEdit,
+                };
+              })
+            );
+          }
 
-        this.subs.push(newNote$);
+          return of({ note: null, isEdit: false });
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          this.isEdit = response?.isEdit;
+          this.note = response?.note;
+          this.initForm(response?.note);
+        },
+
+        error: (error) => {
+          this.apiErrorService.handleError(error);
+        },
+      });
+
+    this.subs?.push(route$);
+  }
+
+  private initForm(note?: INoteResponse | null): void {
+    let control = new NotesItemFormControl();
+
+    if (note) {
+      control.id.setValue(note?._id);
+      control.title.setValue(note?.title);
+      control.body.setValue(note?.body);
+      control.isComplete.setValue(note?.isComplete);
+      control.isPinned.setValue(note?.isPinned);
     }
 
-    private editNote(): void {
-        const rawForm = this.form.getRawValue();
+    this.form = this.formBuilder?.group(control);
+  }
 
-        let newNote = {} as INoteRequest;
-        newNote = {
-            ...this.note as INoteRequest,
-            title: rawForm?.title,
-            body: rawForm?.body,
-            dateModified: new Date(),
-            isComplete: rawForm?.isComplete,
-            isPinned: rawForm?.isPinned
-        };
+  cancelForm(): void {
+    this.initForm(this.note);
+  }
 
-        const editNote$ = this.noteService.putNote(newNote)
-            .subscribe({
-                next: () => {
-                    // this.router.navigate(['/notes', 'list'])
-                },
-                error: (error) => {
-                    this.apiErrorService.handleError(error);
-                }
-            });
+  submitForm(): void {
+    this.validation = new NotesItemValidation(this.form);
 
-        this.subs.push(editNote$);
+    if (this.form?.valid) {
+      if (!this.isEdit) {
+        this.addNote();
+      } else {
+        this.editNote();
+      }
+    } else {
+      this.form?.markAllAsTouched();
     }
+  }
 
-    pinNote(note: INoteResponse | null): void {
-        if (note) {
-            let request = {} as INoteRequest;
-            request = {
-                ...request,
-                _id: note?._id,
-                isPinned: !note?.isPinned
-            };
+  private addNote(): void {
+    const rawForm = this.form.getRawValue();
 
-            const pinNote$ = this.noteService.putNote(request).subscribe({
-                next: (response) => {
-                    this.note = response;
-                },
-                error: (error) => {
-                    this.apiErrorService.handleError(error);
-                }
-            });
+    let newNote = {} as INoteRequest;
+    newNote = {
+      ...newNote,
+      title: rawForm?.title,
+      body: rawForm?.body,
+      dateCreated: new Date(),
+      isComplete: false,
+      isArchived: false,
+      isPinned: false,
+    };
 
-            this.subs.push(pinNote$);
-        }
+    const newNote$ = this.noteService.postNote(newNote).subscribe({
+      next: () => {
+        this.router.navigate(['/notes', 'list']);
+      },
+      error: (error) => {
+        this.apiErrorService.handleError(error);
+      },
+    });
+
+    this.subs.push(newNote$);
+  }
+
+  private editNote(): void {
+    const rawForm = this.form.getRawValue();
+
+    let newNote = {} as INoteRequest;
+    newNote = {
+      ...(this.note as INoteRequest),
+      title: rawForm?.title,
+      body: rawForm?.body,
+      dateModified: new Date(),
+      isComplete: rawForm?.isComplete,
+      isPinned: rawForm?.isPinned,
+    };
+
+    const editNote$ = this.noteService.putNote(newNote).subscribe({
+      next: () => {
+        // this.router.navigate(['/notes', 'list'])
+      },
+      error: (error) => {
+        this.apiErrorService.handleError(error);
+      },
+    });
+
+    this.subs.push(editNote$);
+  }
+
+  pinNote(note: INoteResponse | null): void {
+    if (note) {
+      let request = {} as INoteRequest;
+      request = {
+        ...request,
+        _id: note?._id,
+        isPinned: !note?.isPinned,
+      };
+
+      const pinNote$ = this.noteService.putNote(request).subscribe({
+        next: (response) => {
+          this.note = response;
+        },
+        error: (error) => {
+          this.apiErrorService.handleError(error);
+        },
+      });
+
+      this.subs.push(pinNote$);
     }
+  }
 
-    completeNote(note: INoteResponse | null): void {
-        if (note) {
-            let request = {} as INoteRequest;
-            request = {
-                ...request,
-                _id: note?._id,
-                isComplete: !note?.isComplete
-            };
+  completeNote(note: INoteResponse | null): void {
+    if (note) {
+      let request = {} as INoteRequest;
+      request = {
+        ...request,
+        _id: note?._id,
+        isComplete: !note?.isComplete,
+      };
 
-            const completeNote$ = this.noteService.putNote(request).subscribe({
-                next: (response) => {
-                    this.note = response;
-                },
-                error: (error) => {
-                    this.apiErrorService.handleError(error);
-                }
-            });
+      const completeNote$ = this.noteService.putNote(request).subscribe({
+        next: (response) => {
+          this.note = response;
+        },
+        error: (error) => {
+          this.apiErrorService.handleError(error);
+        },
+      });
 
-            this.subs.push(completeNote$);
-        }
+      this.subs.push(completeNote$);
     }
+  }
 }

@@ -1,5 +1,9 @@
 @import "custom-styles";
 
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/mixins";
+
 .app-notes-list {
   &__spinner {
     width: 4em;
@@ -69,6 +73,10 @@
     max-height: 70vh;
     overflow-x: hidden;
     overflow-y: auto;
+
+    @include media-breakpoint-down(sm) {
+      max-height: 65vh;
+    }
 
     a {
       text-decoration: none;
@@ -140,3 +148,13 @@
     }
   }
 }
+
+// @include media-breakpoint-down(sm) {
+//   .app-notes-list {
+//     display: none;
+
+//     &--rotate {
+//       display: block;
+//     }
+//   }
+// }

@@ -44,6 +44,13 @@ export class NotesListComponent
     super.ngOnDestroy();
   }
 
+  /**
+   * Retrieve notes boased on a filter (if applicable)
+   *
+   * @param delayTime - The delay time to show the results after loading spinner.
+   * @param input - The inputs from the search term.
+   * @param isFilterApplied - Flagging if the notes are retrieved in original formet or though a filter.
+   */
   getNotes(delayTime?: number, input?: Event, isFilterApplied?: boolean): void {
     delayTime = delayTime || 0;
     isFilterApplied = isFilterApplied || false;
@@ -56,6 +63,7 @@ export class NotesListComponent
       .pipe(delay(delayTime))
       .subscribe({
         next: (response) => {
+          this.isLoading = false;
           this.notes = response;
           this.isEmptyResult =
             this.notes?.length === 0 && searchTerm?.length > 0;
@@ -64,14 +72,16 @@ export class NotesListComponent
           this.isLoading = false;
           this.apiErrorService.handleError(error);
         },
-        complete: () => {
-          this.isLoading = false;
-        },
       });
 
     this.subs.push(notes$);
   }
 
+  /**
+   * Remove a note by its id.
+   *
+   * @param id - The note id.
+   */
   removeNote(id: string): void {
     const notes$ = this.noteService.deleteNote(id).subscribe({
       next: (response) => {
@@ -93,6 +103,11 @@ export class NotesListComponent
     this.subs.push(notes$);
   }
 
+  /**
+   * Pin a note by its id.
+   *
+   * @param note - The note to pin.
+   */
   pinNote(note: INoteResponse): void {
     let request = {} as INoteRequest;
     request = {
@@ -117,6 +132,11 @@ export class NotesListComponent
     this.subs.push(pinNote$);
   }
 
+  /**
+   * Mark a note as complete.
+   *
+   * @param note - The note to complete.
+   */
   completeNote(note: INoteResponse): void {
     let request = {} as INoteRequest;
     request = {
