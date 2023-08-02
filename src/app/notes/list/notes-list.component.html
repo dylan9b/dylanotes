@@ -22,7 +22,7 @@
                   {{ item?.title }}
                 </p>
                 <div class="app-notes-list__item__body">
-                  <p>{{ item?.body }}</p>
+                  <div [innerHTML]="item?.body"></div>
                 </div>
               </a>
               <span class="app-notes-list__item__remove" (click)="removeNote(item._id)">

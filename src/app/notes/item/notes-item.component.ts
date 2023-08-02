@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiErrorService } from '@services/api-error.service';
 import { NoteService } from '@services/note-service';
-import { map, of, switchMap } from 'rxjs';
+import { from, map, of, switchMap } from 'rxjs';
 import { Animations } from 'src/app/animations/animations';
 import { DefaultComponent } from 'src/app/default-component/default-component';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
@@ -11,6 +11,7 @@ import { NotesItemFormControl } from './_models/note-item-form-control.model';
 import { NotesItemValidation } from './_models/note-item-validation.model';
 import { INoteRequest } from './_models/note-request.model';
 import { INoteResponse } from './_models/note-response.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-notes-item',
@@ -34,6 +35,7 @@ export class NotesItemComponent
     private router: Router,
     private formBuilder: FormBuilder,
     private noteService: NoteService,
+    private toastrService: ToastrService,
     private apiErrorService: ApiErrorService
   ) {
     super();
@@ -120,12 +122,13 @@ export class NotesItemComponent
   submitForm(): void {
     this.validation = new NotesItemValidation(this.form);
 
-    if (this.form?.valid) {
+    if (this.form?.valid && this.form?.dirty) {
       if (!this.isEdit) {
         this.addNote();
       } else {
         this.editNote();
       }
+      this.form.markAsPristine();
     } else {
       this.form?.markAllAsTouched();
     }
@@ -145,14 +148,21 @@ export class NotesItemComponent
       isPinned: false,
     };
 
-    const newNote$ = this.noteService.postNote(newNote).subscribe({
-      next: () => {
-        this.router.navigate(['/notes', 'list']);
-      },
-      error: (error) => {
-        this.apiErrorService.handleError(error);
-      },
-    });
+    const newNote$ = this.noteService
+      .postNote(newNote)
+      .pipe(
+        switchMap(() => {
+          return from(this.router.navigate(['/notes', 'list']));
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.toastrService.success('Note created successfully!')
+        },
+        error: (error) => {
+          this.apiErrorService.handleError(error);
+        },
+      });
 
     this.subs.push(newNote$);
   }
@@ -172,7 +182,7 @@ export class NotesItemComponent
 
     const editNote$ = this.noteService.putNote(newNote).subscribe({
       next: () => {
-        // this.router.navigate(['/notes', 'list'])
+        this.toastrService.success('Note updated successfully');
       },
       error: (error) => {
         this.apiErrorService.handleError(error);
