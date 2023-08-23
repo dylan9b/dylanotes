@@ -76,7 +76,7 @@
           "defaultConfiguration": "development",
           "options": {
             "port": 4200,
-            "host": "192.168.1.105"
+            "host": "192.168.4.39"
           }
         },
         "extract-i18n": {
@@ -103,5 +103,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

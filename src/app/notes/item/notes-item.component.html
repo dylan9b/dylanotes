@@ -40,14 +40,11 @@
                 <div class="col-12">
                   <div class="form-floating mb-3">
 
-                    <angular-editor formControlName="body" placeholder="Body"></angular-editor>
-
-
-                    <!-- <textarea class="form-control app-notes-input" placeholder="Body" id="bodyInput"
+                    <textarea class="form-control app-notes-input" placeholder="Body" id="bodyInput"
                       formControlName="body" [class.danger]="validation?.isBodyInvalid()">
                     </textarea>
                     <label for="bodyInput">Body
-                    </label> -->
+                    </label>
                     <span *ngIf="validation?.isBodyInvalid()">
                       <p class="text-danger" *ngIf="form?.get('body')?.errors?.['required']">
                         Body is required
