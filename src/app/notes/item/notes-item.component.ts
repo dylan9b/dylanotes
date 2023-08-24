@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiErrorService } from '@services/api-error.service';
 import { NoteService } from '@services/note-service';
@@ -34,7 +35,8 @@ export class NotesItemComponent
     private router: Router,
     private formBuilder: FormBuilder,
     private noteService: NoteService,
-    private apiErrorService: ApiErrorService
+    private apiErrorService: ApiErrorService,
+    private _snackBar: MatSnackBar,
   ) {
     super();
   }
@@ -121,11 +123,7 @@ export class NotesItemComponent
     this.validation = new NotesItemValidation(this.form);
 
     if (this.form?.valid && this.form?.dirty) {
-      if (!this.isEdit) {
-        this.addNote();
-      } else {
-        this.editNote();
-      }
+      !this.isEdit ? this.addNote() : this.editNote();
       this.form.markAsPristine();
     } else {
       this.form?.markAllAsTouched();
@@ -148,16 +146,14 @@ export class NotesItemComponent
 
     const newNote$ = this.noteService
       .postNote(newNote)
-      .pipe(
-        switchMap(() => {
-          return from(this.router.navigate(['/notes', 'list']));
-        })
-      )
       .subscribe({
         next: () => {
+          this._snackBar.open('Note successfully created!', 'Success');
+          this.router.navigate(['/notes', 'list'])
           // this.toastrService.success('Note created successfully!')
         },
         error: (error) => {
+          debugger;
           this.apiErrorService.handleError(error);
         },
       });
@@ -180,6 +176,7 @@ export class NotesItemComponent
 
     const editNote$ = this.noteService.putNote(newNote).subscribe({
       next: () => {
+        this._snackBar.open('Note successfully updated!', 'Success');
         // this.toastrService.success('Note updated successfully');
       },
       error: (error) => {
