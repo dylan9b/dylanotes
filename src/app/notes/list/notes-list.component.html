@@ -2,14 +2,19 @@
 
 <section class="app-notes-list">
   <div class="container">
+
+
     <div class="row mt-3 py-2">
       <div class="col-12 col-lg-4 mx-auto">
         <div class="row">
           <div class="col-12">
             <span class="app-notes-list__filter__container">
-              <i class="fas fa-search"></i>
-              <input type="text" class="form-control app-notes-input" placeholder="Filter notes"
-                (input)="getNotes(500, $event, true)" />
+              <mat-form-field class="w-100">
+                <mat-icon matPrefix>search</mat-icon>
+                <mat-label>Filter notes</mat-label>
+                <input type="text" matInput formControlName="title" placeholder="Type to begin searching ..."
+                  (input)="getNotes(500, $event, true)">
+              </mat-form-field>
             </span>
           </div>
         </div>
