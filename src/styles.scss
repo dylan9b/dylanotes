@@ -2,3 +2,5 @@
 @import "bootstrap/scss/bootstrap.scss";
 @import "ngx-toastr/toastr";
 @import "toastr-errors";
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

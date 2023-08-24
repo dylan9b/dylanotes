@@ -11,7 +11,6 @@ import { NotesItemFormControl } from './_models/note-item-form-control.model';
 import { NotesItemValidation } from './_models/note-item-validation.model';
 import { INoteRequest } from './_models/note-request.model';
 import { INoteResponse } from './_models/note-response.model';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-notes-item',
@@ -35,7 +34,6 @@ export class NotesItemComponent
     private router: Router,
     private formBuilder: FormBuilder,
     private noteService: NoteService,
-    private toastrService: ToastrService,
     private apiErrorService: ApiErrorService
   ) {
     super();
@@ -157,7 +155,7 @@ export class NotesItemComponent
       )
       .subscribe({
         next: () => {
-          this.toastrService.success('Note created successfully!')
+          // this.toastrService.success('Note created successfully!')
         },
         error: (error) => {
           this.apiErrorService.handleError(error);
@@ -182,7 +180,7 @@ export class NotesItemComponent
 
     const editNote$ = this.noteService.putNote(newNote).subscribe({
       next: () => {
-        this.toastrService.success('Note updated successfully');
+        // this.toastrService.success('Note updated successfully');
       },
       error: (error) => {
         this.apiErrorService.handleError(error);

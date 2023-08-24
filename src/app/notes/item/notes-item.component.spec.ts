@@ -5,7 +5,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ApiErrorService } from '@services/api-error.service';
 import { NoteService } from '@services/note-service';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { HeaderModule } from 'src/app/header/header.module';
 
 import { NotesItemComponent } from './notes-item.component';
@@ -17,8 +16,8 @@ describe('NotesItemComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [NotesItemComponent],
-            imports: [RouterTestingModule, HttpClientModule, ToastrModule.forRoot(), BrowserAnimationsModule, HeaderModule, FormsModule, ReactiveFormsModule],
-            providers: [NoteService, ApiErrorService, ToastrService],
+            imports: [RouterTestingModule, HttpClientModule, BrowserAnimationsModule, HeaderModule, FormsModule, ReactiveFormsModule],
+            providers: [NoteService, ApiErrorService],
         })
             .compileComponents();
 
