@@ -1,9 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()
 export class ApiErrorService {
-  constructor() {}
+  snackBar = inject(MatSnackBar);
 
   handleError(error: HttpErrorResponse): void {
     const status = error?.status;
@@ -11,38 +12,25 @@ export class ApiErrorService {
     const secondaryError = error?.error?.message;
 
     const errorMessage = primaryError || secondaryError;
-    // let config = {} as IndividualConfig;
 
     switch (status) {
       case 500:
       case 502:
-        // config = {
-        //     ...config,
-        //     toastClass: 'toastr-500-error ngx-toastr'
-        // };
-        // this.toastrService.show('Something went wrong with the server', 'Server Error', config);
+        this.snackBar.open(
+          'Something went wrong with the server.',
+          'Server Error'
+        );
         break;
       case 400:
       default:
-        // config = {
-        //     ...config,
-        //     toastClass: 'toastr-400-error ngx-toastr'
-        // };
-        // this.toastrService.show(errorMessage, 'Invalid Input', config);
+        this.snackBar.open('Input is in an incorrect format.', 'Invalid Input');
+
         break;
       case 401:
-        // config = {
-        //     ...config,
-        //     toastClass: 'toastr-401-error ngx-toastr'
-        // };
-        // this.toastrService.show(errorMessage, 'Unauthenticated', config);
+        this.snackBar.open('You are not authenticated.', 'Unauthenticated');
         break;
       case 404:
-        // config = {
-        //     ...config,
-        //     toastClass: 'toastr-404-error ngx-toastr'
-        // };
-        // this.toastrService.show(errorMessage, 'Not Found', config);
+        this.snackBar.open('Cannot access URL entered.', 'Not found');
         break;
     }
   }

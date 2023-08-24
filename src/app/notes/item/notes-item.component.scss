@@ -1,59 +1,67 @@
 @import "custom-styles";
 
 @mixin footerButton($mainColor) {
-    padding: 10px 20px;
-    border: 1px solid $mainColor;
-    border-radius: 3px;
-    transition: 0.2s ease all;
-    background: $mainColor;
-    color: white;
+  padding: 10px 20px;
+  border: 1px solid $mainColor;
+  border-radius: 3px;
+  transition: 0.2s ease all;
+  background: $mainColor;
+  color: white;
 
-    &:hover {
-        transition: 0.2s ease all;
-        background: white;
-        color: $mainColor;
-    }
+  &:hover {
+    transition: 0.2s ease all;
+    background: white;
+    color: $mainColor;
+  }
 }
 
 .app-notes-item {
-    form {
-        width: 100%;
+  form {
+    width: 100%;
+  }
+  &__container {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    i {
+      cursor: pointer;
     }
-    &__container {
-        height: 80vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+  }
 
-    textarea {
-        height: 200px;
-    }
+  textarea {
+    height: 200px;
+  }
 
-    &__footer {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-        &__cancel-btn {
-            @include footerButton($eggplant);
-        }
-
-        &__save-btn {
-            @include footerButton($medium-sea-green);
-        }
-    }
-
-    input[type="text"] {
-        &.app-notes-input {
-            border-radius: 5px;
-        }
+    &__cancel-btn {
+      @include footerButton($eggplant);
     }
 
-    textarea {
-        &.app-notes-input {
-            border-radius: 5px;
-            height: 200px;
-        }
+    &__save-btn {
+      @include footerButton($medium-sea-green);
     }
+  }
+
+  input[type="text"] {
+    &.app-notes-input {
+      border-radius: 5px;
+    }
+  }
+
+  textarea {
+    &.app-notes-input {
+      border-radius: 5px;
+      height: 200px;
+    }
+  }
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+  margin-bottom: 20px;
 }

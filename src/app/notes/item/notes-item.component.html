@@ -7,10 +7,10 @@
         <div class="col-12 col-lg-7 mx-auto app-notes-item__content-wrapper">
           <div class="row mb-4" *ngIf="isEdit">
             <div class="col-12 d-flex align-items-center justify-content-between">
-              <i (click)="pinNote(note)" [@pinUnpin]="note?.isPinned ? 'pinned' : 'unPinned'"
+              <i matRipple (click)="pinNote(note)" [@pinUnpin]="note?.isPinned ? 'pinned' : 'unPinned'"
                 class="fa-sharp fa-solid fa-thumbtack"></i>
 
-              <i (click)="completeNote(note)" [@completeIncomplete]="
+              <i matRipple (click)="completeNote(note)" [@completeIncomplete]="
                   note?.isComplete ? 'complete' : 'inComplete'
                 " class="fa-solid fa-circle-check"></i>
             </div>
@@ -20,17 +20,15 @@
               <!-- TITLE - START-->
               <div class="row">
                 <div class="col-12">
-                  <div class="form-floating mb-3">
-                    <input type="text" class="form-control app-notes-input" id="titleInput" formControlName="title"
-                      placeholder="Title" [class.danger]="validation?.isTitleInvalid()" />
-                    <label for="titleInput">Title</label>
 
-                    <span *ngIf="validation?.isTitleInvalid()">
-                      <p class="text-danger" *ngIf="form?.get('title')?.errors?.['required']">
-                        Title is required
-                      </p>
-                    </span>
-                  </div>
+                  <mat-form-field class="w-100">
+                    <mat-label>Title</mat-label>
+                    <input type="text" matInput formControlName="title" placeholder="Ex. this is a title">
+                    <mat-error *ngIf="form?.get('title')?.errors?.['required']">
+                      Title is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+
                 </div>
               </div>
               <!-- TITLE - END -->
@@ -38,19 +36,13 @@
               <!-- BODY - START -->
               <div class="row">
                 <div class="col-12">
-                  <div class="form-floating mb-3">
-
-                    <textarea class="form-control app-notes-input" placeholder="Body" id="bodyInput"
-                      formControlName="body" [class.danger]="validation?.isBodyInvalid()">
-                    </textarea>
-                    <label for="bodyInput">Body
-                    </label>
-                    <span *ngIf="validation?.isBodyInvalid()">
-                      <p class="text-danger" *ngIf="form?.get('body')?.errors?.['required']">
-                        Body is required
-                      </p>
-                    </span>
-                  </div>
+                  <mat-form-field class="w-100">
+                    <mat-label>Body</mat-label>
+                    <textarea [rows]="5" matInput formControlName="body" placeholder="Ex. this is a body"> </textarea>
+                    <mat-error *ngIf="form?.get('body')?.errors?.['required']">
+                      Body is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
                 </div>
               </div>
               <!-- BODY - END -->
@@ -61,11 +53,11 @@
           <div class="row">
             <div class="col-12">
               <div class="app-notes-item__footer">
-                <button [type]="isEdit ? 'button' : 'reset'" class="app-notes-item__footer__cancel-btn"
+                <button matRipple [type]="isEdit ? 'button' : 'reset'" class="app-notes-item__footer__cancel-btn"
                   (click)="cancelForm()">
                   Cancel
                 </button>
-                <button type="submit" class="app-notes-item__footer__save-btn"
+                <button matRipple type="submit" class="app-notes-item__footer__save-btn"
                   [class.app-notes-button__disabled]="!form.valid || (form.valid && !form.dirty)">
                   Save
                 </button>

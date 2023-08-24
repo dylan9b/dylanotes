@@ -1,7 +1,42 @@
 /* You can add global styles to this file, and also import other style files */
 
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "bootstrap/scss/bootstrap.scss";
-@import "toastr-errors";
-@import "~@angular/material/prebuilt-themes/indigo-pink.css"; 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+@import "colors";
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+// TODO: variable colors not working ... 
+.mat-mdc-snack-bar-container {
+  &.error-500 {
+    --mdc-snackbar-container-color: $cyclamen;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+    --mat-snack-bar-button-color: #fff;
+  }
+  &.error-400 {
+    --mdc-snackbar-container-color: $blue-crayola;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+    --mat-snack-bar-button-color: #fff;
+  }
+  &.error-401 {
+    --mdc-snackbar-container-color: $minion-yellow;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+    --mat-snack-bar-button-color: #fff;
+  }
+  &.error-404 {
+    --mdc-snackbar-container-color: $ruby-red;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+    --mat-snack-bar-button-color: #fff;
+  }
+}

@@ -2,9 +2,8 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ApiErrorService } from '@services/api-error.service';
 import { NoteService } from '@services/note-service';
-import { from, map, of, switchMap } from 'rxjs';
+import { map, of, switchMap } from 'rxjs';
 import { Animations } from 'src/app/animations/animations';
 import { DefaultComponent } from 'src/app/default-component/default-component';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
@@ -35,8 +34,7 @@ export class NotesItemComponent
     private router: Router,
     private formBuilder: FormBuilder,
     private noteService: NoteService,
-    private apiErrorService: ApiErrorService,
-    private _snackBar: MatSnackBar,
+    private _snackBar: MatSnackBar
   ) {
     super();
   }
@@ -86,16 +84,10 @@ export class NotesItemComponent
           return of({ note: null, isEdit: false });
         })
       )
-      .subscribe({
-        next: (response) => {
-          this.isEdit = response?.isEdit;
-          this.note = response?.note;
-          this.initForm(response?.note);
-        },
-
-        error: (error) => {
-          this.apiErrorService.handleError(error);
-        },
+      .subscribe((response) => {
+        this.isEdit = response?.isEdit;
+        this.note = response?.note;
+        this.initForm(response?.note);
       });
 
     this.subs?.push(route$);
@@ -144,19 +136,10 @@ export class NotesItemComponent
       isPinned: false,
     };
 
-    const newNote$ = this.noteService
-      .postNote(newNote)
-      .subscribe({
-        next: () => {
-          this._snackBar.open('Note successfully created!', 'Success');
-          this.router.navigate(['/notes', 'list'])
-          // this.toastrService.success('Note created successfully!')
-        },
-        error: (error) => {
-          debugger;
-          this.apiErrorService.handleError(error);
-        },
-      });
+    const newNote$ = this.noteService.postNote(newNote).subscribe(() => {
+      this._snackBar.open('Note successfully created!', 'Success');
+      this.router.navigate(['/notes', 'list']);
+    });
 
     this.subs.push(newNote$);
   }
@@ -174,14 +157,8 @@ export class NotesItemComponent
       isPinned: rawForm?.isPinned,
     };
 
-    const editNote$ = this.noteService.putNote(newNote).subscribe({
-      next: () => {
-        this._snackBar.open('Note successfully updated!', 'Success');
-        // this.toastrService.success('Note updated successfully');
-      },
-      error: (error) => {
-        this.apiErrorService.handleError(error);
-      },
+    const editNote$ = this.noteService.putNote(newNote).subscribe(() => {
+      this._snackBar.open('Note successfully updated!', 'Success');
     });
 
     this.subs.push(editNote$);
@@ -196,14 +173,11 @@ export class NotesItemComponent
         isPinned: !note?.isPinned,
       };
 
-      const pinNote$ = this.noteService.putNote(request).subscribe({
-        next: (response) => {
+      const pinNote$ = this.noteService
+        .putNote(request)
+        .subscribe((response) => {
           this.note = response;
-        },
-        error: (error) => {
-          this.apiErrorService.handleError(error);
-        },
-      });
+        });
 
       this.subs.push(pinNote$);
     }
@@ -218,14 +192,11 @@ export class NotesItemComponent
         isComplete: !note?.isComplete,
       };
 
-      const completeNote$ = this.noteService.putNote(request).subscribe({
-        next: (response) => {
+      const completeNote$ = this.noteService
+        .putNote(request)
+        .subscribe((response) => {
           this.note = response;
-        },
-        error: (error) => {
-          this.apiErrorService.handleError(error);
-        },
-      });
+        });
 
       this.subs.push(completeNote$);
     }
