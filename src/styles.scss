@@ -13,30 +13,19 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-// TODO: variable colors not working ... 
-.mat-mdc-snack-bar-container {
-  &.error-500 {
-    --mdc-snackbar-container-color: $cyclamen;
-    --mat-mdc-snack-bar-button-color: #fff;
-    --mdc-snackbar-supporting-text-color: #fff;
-    --mat-snack-bar-button-color: #fff;
+.status {
+  &__base {
+    --mdc-snackbar-supporting-text-color: #{$light};
+    --mat-snack-bar-button-color: #{$light};
   }
-  &.error-400 {
-    --mdc-snackbar-container-color: $blue-crayola;
-    --mat-mdc-snack-bar-button-color: #fff;
-    --mdc-snackbar-supporting-text-color: #fff;
-    --mat-snack-bar-button-color: #fff;
+
+  &__500 {
+    @extend .status__base;
+    --mdc-snackbar-container-color: #{$cyclamen};
   }
-  &.error-401 {
-    --mdc-snackbar-container-color: $minion-yellow;
-    --mat-mdc-snack-bar-button-color: #fff;
-    --mdc-snackbar-supporting-text-color: #fff;
-    --mat-snack-bar-button-color: #fff;
-  }
-  &.error-404 {
-    --mdc-snackbar-container-color: $ruby-red;
-    --mat-mdc-snack-bar-button-color: #fff;
-    --mdc-snackbar-supporting-text-color: #fff;
-    --mat-snack-bar-button-color: #fff;
+  &__200 {
+    @extend .status__base;
+    --mdc-snackbar-container-color: #{$medium-sea-green};
+    --mat-snack-bar-button-color: #{$light};
   }
 }

@@ -137,7 +137,9 @@ export class NotesItemComponent
     };
 
     const newNote$ = this.noteService.postNote(newNote).subscribe(() => {
-      this._snackBar.open('Note successfully created!', 'Success');
+      this._snackBar.open('Note successfully created!', 'Success', {
+        panelClass: 'status__200',
+      });
       this.router.navigate(['/notes', 'list']);
     });
 
@@ -158,7 +160,9 @@ export class NotesItemComponent
     };
 
     const editNote$ = this.noteService.putNote(newNote).subscribe(() => {
-      this._snackBar.open('Note successfully updated!', 'Success');
+      this._snackBar.open('Note successfully updated!', 'Success', {
+        panelClass: 'status__200',
+      });
     });
 
     this.subs.push(editNote$);

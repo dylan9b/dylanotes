@@ -41,7 +41,6 @@ import { ErrorInterceptor } from './http-interceptors/error-interceptor';
         duration: 2000,
         horizontalPosition: 'right',
         verticalPosition: 'top',
-        panelClass: 'error-500',
       },
     },
   ],
