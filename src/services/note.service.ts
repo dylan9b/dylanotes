@@ -15,7 +15,7 @@ export class NoteService {
     this.baseUrl = `${environment.BASE_URL}/api`;
   }
 
-  getNotes(searchTerm?: string): Observable<INoteResponse[]> {
+  getNotes(searchTerm?: string | null): Observable<INoteResponse[]> {
     return this.http
       .get<{ data: INoteResponse[] }>(`${this.baseUrl}/notes/list`, {
         params: { searchTerm: searchTerm as string },

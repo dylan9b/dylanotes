@@ -5,7 +5,7 @@
     <form *ngIf="form" [formGroup]="form" (ngSubmit)="submitForm()">
       <div class="row mt-3 py-2">
         <div class="col-12 col-lg-7 mx-auto app-notes-item__content-wrapper">
-          <div class="row mb-4" *ngIf="isEdit">
+          <div class="row mb-4" *ngIf="note?._id">
             <div class="col-12 d-flex align-items-center justify-content-between">
               <i matRipple (click)="pinNote(note)" [@pinUnpin]="note?.isPinned ? 'pinned' : 'unPinned'"
                 class="fa-sharp fa-solid fa-thumbtack"></i>
@@ -53,7 +53,7 @@
           <div class="row">
             <div class="col-12">
               <div class="app-notes-item__footer">
-                <button matRipple [type]="isEdit ? 'button' : 'reset'" class="app-notes-item__footer__cancel-btn"
+                <button matRipple [type]="note?._id ? 'button' : 'reset'" class="app-notes-item__footer__cancel-btn"
                   (click)="cancelForm()">
                   Cancel
                 </button>

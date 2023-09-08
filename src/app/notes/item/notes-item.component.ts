@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NoteService } from '@services/note-service';
+import { NoteService } from '@services/note.service';
 import { map, of, switchMap } from 'rxjs';
 import { Animations } from 'src/app/animations/animations';
 import { DefaultComponent } from 'src/app/default-component/default-component';
@@ -11,6 +11,10 @@ import { NotesItemFormControl } from './_models/note-item-form-control.model';
 import { NotesItemValidation } from './_models/note-item-validation.model';
 import { INoteRequest } from './_models/note-request.model';
 import { INoteResponse } from './_models/note-response.model';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../../state/app.state';
+import { selectNote } from 'src/state/notes/note.selectors';
+import { loadNote } from '../../../state/notes/note.actions';
 
 @Component({
   selector: 'app-notes-item',
@@ -26,15 +30,17 @@ export class NotesItemComponent
   form!: FormGroup;
   validation!: NotesItemValidation | null;
   noteSteps = NotesStep;
-  isEdit!: boolean;
   note!: INoteResponse | null;
+
+  note$ = this._store.select(selectNote);
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private formBuilder: FormBuilder,
     private noteService: NoteService,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    private _store: Store<AppState>
   ) {
     super();
   }
@@ -49,48 +55,23 @@ export class NotesItemComponent
   }
 
   private subscribeRouteParams(): void {
-    const route$ = this.route?.params
+    const initData$ = this.route.params
       .pipe(
         map((params) => {
           const { id } = params;
           return id as string;
         }),
         switchMap((id) => {
-          if (id) {
-            return of({
-              isEdit: true,
-              id,
-            });
-          } else {
-            return of({
-              isEdit: false,
-              id: null,
-            });
-          }
-        }),
-        switchMap((response) => {
-          const { id, isEdit } = response;
-          if (isEdit && id) {
-            return this.noteService.getNote(id).pipe(
-              map((note) => {
-                return {
-                  note,
-                  isEdit,
-                };
-              })
-            );
-          }
-
-          return of({ note: null, isEdit: false });
+          this._store.dispatch(loadNote({ id }));
+          return this.note$;
         })
       )
-      .subscribe((response) => {
-        this.isEdit = response?.isEdit;
-        this.note = response?.note;
-        this.initForm(response?.note);
+      .subscribe((note) => {
+        this.note = note;
+        this.initForm(note);
       });
-
-    this.subs?.push(route$);
+      
+    this.subs?.push(initData$);
   }
 
   private initForm(note?: INoteResponse | null): void {
@@ -115,7 +96,7 @@ export class NotesItemComponent
     this.validation = new NotesItemValidation(this.form);
 
     if (this.form?.valid && this.form?.dirty) {
-      !this.isEdit ? this.addNote() : this.editNote();
+      !this.note?._id ? this.addNote() : this.editNote();
       this.form.markAsPristine();
     } else {
       this.form?.markAllAsTouched();

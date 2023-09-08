@@ -2,11 +2,14 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { DefaultComponent } from 'src/app/default-component/default-component';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { ApiErrorService } from '@services/api-error.service';
-import { NoteService } from '@services/note-service';
+import { NoteService } from '@services/note.service';
 import { INoteResponse } from '../item/_models/note-response.model';
 import { INoteRequest } from '../item/_models/note-request.model';
 import { Animations } from 'src/app/animations/animations';
-import { delay } from 'rxjs';
+import { selectAllNotes } from 'src/state/notes/note.selectors';
+import { Store } from '@ngrx/store';
+import { loadNotes } from 'src/state/notes/note.actions';
+import { AppState } from 'src/state/app.state';
 
 @Component({
   selector: 'app-notes-list',
@@ -23,6 +26,8 @@ export class NotesListComponent
   extends DefaultComponent
   implements OnInit, OnDestroy
 {
+  allNotes$ = this.store.select(selectAllNotes);
+
   notes: INoteResponse[] = [];
   noteSteps = NotesStep;
   isEmptyResult: boolean = false;
@@ -30,51 +35,25 @@ export class NotesListComponent
 
   constructor(
     private noteService: NoteService,
-    private apiErrorService: ApiErrorService
+    private apiErrorService: ApiErrorService,
+    private store: Store<AppState>
   ) {
     super();
   }
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.getNotes();
+    this.store.dispatch(loadNotes({ searchTerm: '' }));
   }
 
   override ngOnDestroy(): void {
     super.ngOnDestroy();
   }
 
-  /**
-   * Retrieve notes boased on a filter (if applicable)
-   *
-   * @param delayTime - The delay time to show the results after loading spinner.
-   * @param input - The inputs from the search term.
-   * @param isFilterApplied - Flagging if the notes are retrieved in original formet or though a filter.
-   */
-  getNotes(delayTime?: number, input?: Event, isFilterApplied?: boolean): void {
-    delayTime = delayTime || 0;
-    isFilterApplied = isFilterApplied || false;
-    isFilterApplied ? (this.isLoading = true) : (this.isLoading = false);
-
+  searchNotes(input: Event): void {
     const searchTerm = (input?.target as HTMLInputElement)?.value || '';
 
-    const notes$ = this.noteService
-      .getNotes(searchTerm)
-      .pipe(delay(delayTime))
-      .subscribe({
-        next: (response) => {
-          this.isLoading = false;
-          this.notes = response;
-          this.isEmptyResult =
-            this.notes?.length === 0 && searchTerm?.length > 0;
-        },
-        error: (error) => {
-          this.isLoading = false;
-          this.apiErrorService.handleError(error);
-        },
-      });
-
-    this.subs.push(notes$);
+    this.store.dispatch(loadNotes({ searchTerm }));
   }
 
   /**

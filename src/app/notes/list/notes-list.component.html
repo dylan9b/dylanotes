@@ -13,14 +13,14 @@
                 <mat-icon matPrefix>search</mat-icon>
                 <mat-label>Filter notes</mat-label>
                 <input type="text" matInput formControlName="title" placeholder="Type to begin searching ..."
-                  (input)="getNotes(500, $event, true)">
+                  (keydown.enter)="searchNotes($event)">
               </mat-form-field>
             </span>
           </div>
         </div>
 
         <div class="row app-notes-list__items" *ngIf="!isLoading">
-          <div class="col-12 mt-3" *ngFor="let item of notes; index as i">
+          <div class="col-12 mt-3" *ngFor="let item of allNotes$ | async; index as i">
             <div class="app-notes-list__item" [@deleteUndeleteState]="item?.isArchived ? 'delete' : 'void'">
               <a [routerLink]="['/notes', item?._id]">
                 <p class="app-notes-list__item__title">
