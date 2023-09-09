@@ -1,11 +1,9 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NoteService } from '@services/note.service';
 import { map, of, switchMap } from 'rxjs';
 import { Animations } from 'src/app/animations/animations';
-import { DefaultComponent } from 'src/app/default-component/default-component';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { NotesItemFormControl } from './_models/note-item-form-control.model';
 import { NotesItemValidation } from './_models/note-item-validation.model';
@@ -14,7 +12,11 @@ import { INoteResponse } from './_models/note-response.model';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../state/app.state';
 import { selectNote } from 'src/state/notes/note.selectors';
-import { loadNote } from '../../../state/notes/note.actions';
+import {
+  loadNote,
+  postNote,
+  updateNote,
+} from '../../../state/notes/note.actions';
 
 @Component({
   selector: 'app-notes-item',
@@ -23,10 +25,7 @@ import { loadNote } from '../../../state/notes/note.actions';
   encapsulation: ViewEncapsulation.None,
   animations: [Animations.pinUnpin, Animations.completeIncomplete],
 })
-export class NotesItemComponent
-  extends DefaultComponent
-  implements OnInit, OnDestroy
-{
+export class NotesItemComponent implements OnInit {
   form!: FormGroup;
   validation!: NotesItemValidation | null;
   noteSteps = NotesStep;
@@ -35,43 +34,39 @@ export class NotesItemComponent
   note$ = this._store.select(selectNote);
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private formBuilder: FormBuilder,
-    private noteService: NoteService,
+    private _route: ActivatedRoute,
+    private _router: Router,
+    private _formBuilder: FormBuilder,
     private _snackBar: MatSnackBar,
     private _store: Store<AppState>
-  ) {
-    super();
-  }
+  ) {}
 
-  override ngOnInit(): void {
-    super.ngOnInit();
+  ngOnInit(): void {
     this.subscribeRouteParams();
   }
 
-  override ngOnDestroy(): void {
-    super.ngOnDestroy();
-  }
-
   private subscribeRouteParams(): void {
-    const initData$ = this.route.params
+    const initData$ = this._route.params
       .pipe(
         map((params) => {
           const { id } = params;
           return id as string;
         }),
         switchMap((id) => {
-          this._store.dispatch(loadNote({ id }));
-          return this.note$;
+          if (id) {
+            this._store.dispatch(loadNote({ id }));
+            return this.note$;
+          }
+
+          return of(null);
         })
       )
       .subscribe((note) => {
         this.note = note;
         this.initForm(note);
       });
-      
-    this.subs?.push(initData$);
+
+    // this.subs?.push(initData$);
   }
 
   private initForm(note?: INoteResponse | null): void {
@@ -85,7 +80,7 @@ export class NotesItemComponent
       control.isPinned.setValue(note?.isPinned);
     }
 
-    this.form = this.formBuilder?.group(control);
+    this.form = this._formBuilder?.group(control);
   }
 
   cancelForm(): void {
@@ -117,21 +112,20 @@ export class NotesItemComponent
       isPinned: false,
     };
 
-    const newNote$ = this.noteService.postNote(newNote).subscribe(() => {
-      this._snackBar.open('Note successfully created!', 'Success', {
-        panelClass: 'status__200',
-      });
-      this.router.navigate(['/notes', 'list']);
+    this._store.dispatch(postNote({ note: newNote }));
+
+    this._snackBar.open('Note successfully created!', 'Success', {
+      panelClass: 'status__200',
     });
 
-    this.subs.push(newNote$);
+    this._router.navigate(['/notes', 'list']);
   }
 
   private editNote(): void {
     const rawForm = this.form.getRawValue();
 
-    let newNote = {} as INoteRequest;
-    newNote = {
+    let updatedNote = {} as INoteRequest;
+    updatedNote = {
       ...(this.note as INoteRequest),
       title: rawForm?.title,
       body: rawForm?.body,
@@ -140,50 +134,36 @@ export class NotesItemComponent
       isPinned: rawForm?.isPinned,
     };
 
-    const editNote$ = this.noteService.putNote(newNote).subscribe(() => {
-      this._snackBar.open('Note successfully updated!', 'Success', {
-        panelClass: 'status__200',
-      });
-    });
+    this._store.dispatch(updateNote({ note: updatedNote }));
 
-    this.subs.push(editNote$);
+    this._snackBar.open('Note successfully updated!', 'Success', {
+      panelClass: 'status__200',
+    });
   }
 
   pinNote(note: INoteResponse | null): void {
     if (note) {
-      let request = {} as INoteRequest;
-      request = {
-        ...request,
+      let updatedNote = {} as INoteRequest;
+      updatedNote = {
+        ...updatedNote,
         _id: note?._id,
         isPinned: !note?.isPinned,
       };
 
-      const pinNote$ = this.noteService
-        .putNote(request)
-        .subscribe((response) => {
-          this.note = response;
-        });
-
-      this.subs.push(pinNote$);
+      this._store.dispatch(updateNote({ note: updatedNote }));
     }
   }
 
   completeNote(note: INoteResponse | null): void {
     if (note) {
-      let request = {} as INoteRequest;
-      request = {
-        ...request,
+      let updatedNote = {} as INoteRequest;
+      updatedNote = {
+        ...updatedNote,
         _id: note?._id,
         isComplete: !note?.isComplete,
       };
 
-      const completeNote$ = this.noteService
-        .putNote(request)
-        .subscribe((response) => {
-          this.note = response;
-        });
-
-      this.subs.push(completeNote$);
+      this._store.dispatch(updateNote({ note: updatedNote }));
     }
   }
 }

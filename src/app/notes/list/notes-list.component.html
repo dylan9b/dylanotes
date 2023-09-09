@@ -21,7 +21,7 @@
 
         <div class="row app-notes-list__items" *ngIf="!isLoading">
           <div class="col-12 mt-3" *ngFor="let item of allNotes$ | async; index as i">
-            <div class="app-notes-list__item" [@deleteUndeleteState]="item?.isArchived ? 'delete' : 'void'">
+            <div class="app-notes-list__item" [@delete]="item?.isArchived ? 'delete' : 'void'">
               <a [routerLink]="['/notes', item?._id]">
                 <p class="app-notes-list__item__title">
                   {{ item?.title }}
@@ -36,10 +36,10 @@
 
               <div class="row">
                 <div class="col-12 d-flex align-items-center justify-content-between">
-                  <i (click)="pinNote(item)" [@pinUnpin]="item?.isPinned ? 'pinned' : 'unPinned'"
+                  <i matRipple (click)="pinNote(item)" [@pinUnpin]="item?.isPinned ? 'pinned' : 'unPinned'"
                     class="fa-sharp fa-solid fa-thumbtack"></i>
 
-                  <i (click)="completeNote(item)" [@completeIncomplete]="
+                  <i matripple (click)="completeNote(item)" [@completeIncomplete]="
                       item?.isComplete ? 'complete' : 'inComplete'
                     " class="fa-solid fa-circle-check"></i>
                 </div>

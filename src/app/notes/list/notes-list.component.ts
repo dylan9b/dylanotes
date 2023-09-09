@@ -1,15 +1,17 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { DefaultComponent } from 'src/app/default-component/default-component';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
-import { ApiErrorService } from '@services/api-error.service';
-import { NoteService } from '@services/note.service';
 import { INoteResponse } from '../item/_models/note-response.model';
 import { INoteRequest } from '../item/_models/note-request.model';
 import { Animations } from 'src/app/animations/animations';
 import { selectAllNotes } from 'src/state/notes/note.selectors';
 import { Store } from '@ngrx/store';
-import { loadNotes } from 'src/state/notes/note.actions';
+import {
+  deleteNote,
+  loadNotes,
+  updateNote,
+} from 'src/state/notes/note.actions';
 import { AppState } from 'src/state/app.state';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-notes-list',
@@ -22,11 +24,8 @@ import { AppState } from 'src/state/app.state';
   ],
   encapsulation: ViewEncapsulation.None,
 })
-export class NotesListComponent
-  extends DefaultComponent
-  implements OnInit, OnDestroy
-{
-  allNotes$ = this.store.select(selectAllNotes);
+export class NotesListComponent implements OnInit {
+  allNotes$ = this._store.select(selectAllNotes);
 
   notes: INoteResponse[] = [];
   noteSteps = NotesStep;
@@ -34,26 +33,18 @@ export class NotesListComponent
   isLoading: boolean = false;
 
   constructor(
-    private noteService: NoteService,
-    private apiErrorService: ApiErrorService,
-    private store: Store<AppState>
-  ) {
-    super();
-  }
+    private _store: Store<AppState>,
+    private _snackBar: MatSnackBar
+  ) {}
 
-  override ngOnInit(): void {
-    super.ngOnInit();
-    this.store.dispatch(loadNotes({ searchTerm: '' }));
-  }
-
-  override ngOnDestroy(): void {
-    super.ngOnDestroy();
+  ngOnInit(): void {
+    this._store.dispatch(loadNotes({ searchTerm: '' }));
   }
 
   searchNotes(input: Event): void {
     const searchTerm = (input?.target as HTMLInputElement)?.value || '';
 
-    this.store.dispatch(loadNotes({ searchTerm }));
+    this._store.dispatch(loadNotes({ searchTerm }));
   }
 
   /**
@@ -62,24 +53,11 @@ export class NotesListComponent
    * @param id - The note id.
    */
   removeNote(id: string): void {
-    const notes$ = this.noteService.deleteNote(id).subscribe({
-      next: (response) => {
-        const index = this.notes.findIndex((n) => n._id === response?._id);
-
-        if (index > -1) {
-          this.notes[index].isArchived = response?.isArchived;
-
-          setTimeout(() => {
-            this.notes.splice(index, 1);
-          }, 250);
-        }
-      },
-      error: (error) => {
-        this.apiErrorService.handleError(error);
-      },
+    this._snackBar.open('Note successfully deleted!', 'Success', {
+      panelClass: 'status__200',
     });
 
-    this.subs.push(notes$);
+    this._store.dispatch(deleteNote({ id }));
   }
 
   /**
@@ -88,27 +66,16 @@ export class NotesListComponent
    * @param note - The note to pin.
    */
   pinNote(note: INoteResponse): void {
-    let request = {} as INoteRequest;
-    request = {
-      ...request,
-      _id: note?._id,
-      isPinned: !note?.isPinned,
-    };
+    if (note) {
+      let updatedNote = {} as INoteRequest;
+      updatedNote = {
+        ...updatedNote,
+        _id: note?._id,
+        isPinned: !note?.isPinned,
+      };
 
-    const pinNote$ = this.noteService.putNote(request).subscribe({
-      next: (response) => {
-        const index = this.notes.findIndex((n) => n._id === response?._id);
-
-        if (index > -1) {
-          this.notes[index].isPinned = response?.isPinned;
-        }
-      },
-      error: (error) => {
-        this.apiErrorService.handleError(error);
-      },
-    });
-
-    this.subs.push(pinNote$);
+      this._store.dispatch(updateNote({ note: updatedNote }));
+    }
   }
 
   /**
@@ -117,26 +84,13 @@ export class NotesListComponent
    * @param note - The note to complete.
    */
   completeNote(note: INoteResponse): void {
-    let request = {} as INoteRequest;
-    request = {
-      ...request,
+    let updatedNote = {} as INoteRequest;
+    updatedNote = {
+      ...updatedNote,
       _id: note?._id,
       isComplete: !note?.isComplete,
     };
 
-    const completeNote$ = this.noteService.putNote(request).subscribe({
-      next: (response) => {
-        const index = this.notes.findIndex((n) => n._id === response?._id);
-
-        if (index > -1) {
-          this.notes[index].isComplete = response?.isComplete;
-        }
-      },
-      error: (error) => {
-        this.apiErrorService.handleError(error);
-      },
-    });
-
-    this.subs.push(completeNote$);
+    this._store.dispatch(updateNote({ note: updatedNote }));
   }
 }
