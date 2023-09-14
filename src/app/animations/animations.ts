@@ -31,20 +31,29 @@ export const Animations = {
         transform: 'scale(1.1)',
       })
     ),
-    transition('pinned => unPinned', [
+    transition('pinned <=> unPinned', [
       style({
         transform: 'scale(0)',
         opacity: '0',
       }),
       animate('0.15s'),
     ]),
-    transition('unPinned => pinned', [
-      style({
-        transform: 'scale(0)',
-        opacity: '0',
-      }),
-      animate('0.15s'),
-    ]),
+
+    // transition('* => pinned', [
+    //   style({
+    //     transform: 'scale(0)',
+    //     opacity: '0',
+    //   }),
+    //   animate('0.15s'),
+    // ]),
+
+    // transition('* => unPinned', [
+    //   style({
+    //     transform: 'scale(0)',
+    //     opacity: '0',
+    //   }),
+    //   animate('0.15s'),
+    // ]),
   ]),
 
   completeIncomplete: trigger('completeIncomplete', [
@@ -64,27 +73,37 @@ export const Animations = {
         color: '#cccccc',
       })
     ),
-    state(
-      '*',
-      style({
-        color: '#cccccc',
-        transform: 'scale(1.1)',
-      })
-    ),
-    transition('complete => inComplete', [
-      style({
-        transform: 'scale(0)',
-        opacity: '0',
-      }),
-      animate('0.15s'),
-    ]),
-    transition('inComplete => complete', [
+    // state(
+    //   '*',
+    //   style({
+    //     color: '#cccccc',
+    //     transform: 'scale(1.1)',
+    //   })
+    // ),
+
+    transition('inComplete <=> complete', [
       style({
         transform: 'scale(0)',
         opacity: '0',
       }),
       animate('0.15s'),
     ]),
+
+    // transition('* => complete', [
+    //   style({
+    //     transform: 'scale(0)',
+    //     opacity: '0',
+    //   }),
+    //   animate('0.15s'),
+    // ]),
+
+    // transition('* => inComplete', [
+    //   style({
+    //     transform: 'scale(0)',
+    //     opacity: '0',
+    //   }),
+    //   animate('0.15s'),
+    // ]),
   ]),
 
   delete: trigger('delete', [
@@ -92,15 +111,15 @@ export const Animations = {
       'delete',
       style({
         opacity: '0',
-        transform: 'scale(0)'
+        transform: 'scale(0)',
       })
     ),
     transition('void => delete', [
       style({
         opacity: '1',
-        transform: 'scale(1.1)'
+        transform: 'scale(1.1)',
       }),
-      animate('0.5s'),
+      animate('0.15s'),
     ]),
   ]),
 };

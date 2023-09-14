@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRippleModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 @NgModule({
   imports: [
     CommonModule,
@@ -16,7 +17,8 @@ import { MatButtonModule } from '@angular/material/button';
     MatFormFieldModule,
     MatInputModule,
     MatRippleModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule,
   ],
   declarations: [NotesItemComponent],
   providers: [],

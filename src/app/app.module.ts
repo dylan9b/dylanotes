@@ -33,7 +33,18 @@ import { NoteEffects } from 'src/state/notes/note.effects';
     BrowserAnimationsModule,
     MatSnackBarModule,
 
-    StoreModule.forRoot({ notes: noteReducer }),
+    StoreModule.forRoot(
+      { notes: noteReducer },
+      {
+        runtimeChecks: {
+          strictActionImmutability: true,
+          strictActionSerializability: true,
+          strictActionTypeUniqueness: true,
+          strictStateSerializability: true,
+          strictStateImmutability: true,
+        },
+      }
+    ),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
       logOnly: !isDevMode(), // Restrict extension to log-only mode

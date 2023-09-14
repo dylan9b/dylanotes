@@ -32,7 +32,21 @@ export const loadNoteFail = createAction(
   props<{ error: string }>()
 );
 
-// UPDATE NOTE
+// UPDATE NOTE - ITEM
+export const updateNoteInList = createAction(
+  `${noteKey} Update Note in List`,
+  props<{ note: INoteRequest }>()
+);
+export const updateNoteInListSuccess = createAction(
+  `${noteKey} Update Note in List: Success`,
+  props<{ notes: INoteResponse[] }>()
+);
+export const updateNoteInListFail = createAction(
+  `${noteKey} Update Note in List: Fail`,
+  props<{ error: string }>()
+);
+
+// UPDATE NOTE - LIST
 export const updateNote = createAction(
   `${noteKey} Update Note`,
   props<{ note: INoteRequest }>()
@@ -46,18 +60,24 @@ export const updateNoteFail = createAction(
   props<{ error: string }>()
 );
 
-// DELETE NOTE
-export const deleteNote = createAction(
-  `${noteKey} Delete Note`,
+// ARCHIVE NOTE
+export const archiveNote = createAction(
+  `${noteKey} Archive Note`,
   props<{ id: string }>()
 );
+export const archiveNoteSuccess = createAction(
+  `${noteKey} Archive Note: Success`,
+  props<{ note: INoteResponse }>()
+);
+export const archiveNoteFail = createAction(
+  `${noteKey} Archive Note: Fail`,
+  props<{ error: string }>()
+);
+
+// DELETE NOTE FROM LIST
 export const deleteNoteSuccess = createAction(
   `${noteKey} Delete Note: Success`,
   props<{ note: INoteResponse }>()
-);
-export const deleteNoteFail = createAction(
-  `${noteKey} Delete Note: Fail`,
-  props<{ error: string }>()
 );
 
 // POST NOTE

@@ -1,8 +1,9 @@
 import { NoteState } from './notes.state';
 import { createReducer, on } from '@ngrx/store';
 import {
-  deleteNote,
-  deleteNoteFail,
+  archiveNote,
+  archiveNoteFail,
+  archiveNoteSuccess,
   deleteNoteSuccess,
   loadNote,
   loadNoteFail,
@@ -20,7 +21,6 @@ import {
 
 export const initialState: NoteState = {
   notes: [],
-  note: null,
   error: null,
   status: 'pending',
 };
@@ -30,12 +30,14 @@ export const noteReducer = createReducer(
 
   // GET NOTES
   on(loadNotes, (state) => ({ ...state, status: 'loading' })),
-  on(loadNotesSuccess, (state, { notes }) => ({
-    ...state,
-    notes: notes,
-    error: null,
-    status: 'success',
-  })),
+  on(loadNotesSuccess, (state, { notes }) => {
+    return {
+      ...state,
+      notes: notes,
+      error: null,
+      status: 'success',
+    };
+  }),
   on(loadNotesFail, (state, { error }) => ({
     ...state,
     error: error,
@@ -46,7 +48,6 @@ export const noteReducer = createReducer(
   on(loadNote, (state) => ({ ...state, status: 'loading' })),
   on(loadNoteSuccess, (state, { note }) => ({
     ...state,
-    note: note,
     error: null,
     status: 'success',
   })),
@@ -59,20 +60,14 @@ export const noteReducer = createReducer(
   // UPDATE NOTE
   on(updateNote, (state) => ({ ...state, status: 'loading' })),
   on(updateNoteSuccess, (state, { note }) => {
-    const updatedNotes = state.notes.map((el) => {
-      if (el._id === note?._id) {
-        return Object.assign({}, el, {
-          isPinned: note?.isPinned,
-          isComplete: note?.isComplete,
-        });
-      }
-      return el;
-    });
+    const { _id } = note;
 
     return {
       ...state,
-      notes: updatedNotes,
-      note: note,
+      notes: {
+        ...state.notes,
+        [_id]: note,
+      },
       error: null,
       status: 'success',
     };
@@ -83,10 +78,24 @@ export const noteReducer = createReducer(
     status: 'error',
   })),
 
-  // DELETE NOTE
-  on(deleteNote, (state) => ({ ...state, status: 'loading' })),
-  on(deleteNoteSuccess, (state, { note }) => {
-    const updatedNotes = state.notes.filter((item) => item._id !== note?._id);
+  // ARCHIVE NOTE
+  on(archiveNote, (state) => ({ ...state, status: 'loading' })),
+  on(archiveNoteSuccess, (state, { note }) => {
+    const { _id } = note;
+
+    note = {
+      ...note,
+      isArchived: true,
+    };
+
+    const updatedNotes = state.notes.map((item) => {
+      if (item?._id === note?._id) {
+        item = { ...item, isArchived: true };
+        return item;
+      }
+      return item;
+    });
+
     return {
       ...state,
       notes: updatedNotes,
@@ -94,18 +103,28 @@ export const noteReducer = createReducer(
       status: 'success',
     };
   }),
-  on(deleteNoteFail, (state, { error }) => ({
+  on(archiveNoteFail, (state, { error }) => ({
     ...state,
     error: error,
     status: 'error',
   })),
+
+  // DELETE NOTE
+  on(deleteNoteSuccess, (state, { note }) => {
+    const updatedNotes = state.notes.filter((item) => item?._id !== note?._id);
+
+    return {
+      ...state,
+      notes: updatedNotes,
+    };
+  }),
 
   // POST NOTE
   on(postNote, (state) => ({ ...state, status: 'loading' })),
   on(postNoteSuccess, (state, { note }) => {
     return {
       ...state,
-      notes: [note, ...state.notes],
+      notes: { ...note, ...state.notes },
       error: null,
       status: 'success',
     };

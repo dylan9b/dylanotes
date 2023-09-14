@@ -1,8 +1,14 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, of, switchMap } from 'rxjs';
+import { map, of, switchMap, takeUntil } from 'rxjs';
 import { Animations } from 'src/app/animations/animations';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { NotesItemFormControl } from './_models/note-item-form-control.model';
@@ -11,7 +17,8 @@ import { INoteRequest } from './_models/note-request.model';
 import { INoteResponse } from './_models/note-response.model';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../state/app.state';
-import { selectNote } from 'src/state/notes/note.selectors';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { selectAllNotes } from 'src/state/notes/note.selectors';
 import {
   loadNote,
   postNote,
@@ -31,7 +38,8 @@ export class NotesItemComponent implements OnInit {
   noteSteps = NotesStep;
   note!: INoteResponse | null;
 
-  note$ = this._store.select(selectNote);
+  notes$ = this._store.select(selectAllNotes);
+  destroyRef = inject(DestroyRef);
 
   constructor(
     private _route: ActivatedRoute,
@@ -46,7 +54,7 @@ export class NotesItemComponent implements OnInit {
   }
 
   private subscribeRouteParams(): void {
-    const initData$ = this._route.params
+    this._route.params
       .pipe(
         map((params) => {
           const { id } = params;
@@ -55,18 +63,26 @@ export class NotesItemComponent implements OnInit {
         switchMap((id) => {
           if (id) {
             this._store.dispatch(loadNote({ id }));
-            return this.note$;
+            return this.notes$.pipe(
+              switchMap((result) => {
+                return of(Object.values(result) as INoteResponse[]);
+              }),
+              switchMap((data) => {
+                return of(data.find((d) => d._id === id));
+              })
+            );
           }
 
           return of(null);
         })
       )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((note) => {
-        this.note = note;
+        if (note) {
+          this.note = note;
+        }
         this.initForm(note);
       });
-
-    // this.subs?.push(initData$);
   }
 
   private initForm(note?: INoteResponse | null): void {
@@ -106,7 +122,8 @@ export class NotesItemComponent implements OnInit {
       ...newNote,
       title: rawForm?.title,
       body: rawForm?.body,
-      dateCreated: new Date(),
+      dateCreated: new Date().toJSON(),
+      dateModified: new Date().toJSON(),
       isComplete: false,
       isArchived: false,
       isPinned: false,
@@ -118,7 +135,7 @@ export class NotesItemComponent implements OnInit {
       panelClass: 'status__200',
     });
 
-    this._router.navigate(['/notes', 'list']);
+    // this._router.navigate(['/notes', 'list']);
   }
 
   private editNote(): void {
@@ -126,10 +143,10 @@ export class NotesItemComponent implements OnInit {
 
     let updatedNote = {} as INoteRequest;
     updatedNote = {
-      ...(this.note as INoteRequest),
+      ...(this.note!),
       title: rawForm?.title,
       body: rawForm?.body,
-      dateModified: new Date(),
+      dateModified: new Date().toJSON(),
       isComplete: rawForm?.isComplete,
       isPinned: rawForm?.isPinned,
     };

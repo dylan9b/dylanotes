@@ -1,11 +1,8 @@
 <section class="app-header">
   <div class="row h-100 d-flex align-items-center">
     <div class="col-4">
-      <i
-        class="fas fa-chevron-left app-header__back-icon"
-        *ngIf="input?.showGoBackIcon"
-        (click)="goBack()"
-      ></i>
+      <mat-icon class="app-header__back-icon" *ngIf="input?.showGoBackIcon" (click)="goBack()" aria-label="Go back">
+        arrow_circle_left</mat-icon>
     </div>
     <div class="col-4">
       <span class="app-header__title">dylanotes</span>

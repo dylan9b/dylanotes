@@ -8,8 +8,3 @@ export const selectAllNotes = createSelector(
   selectNotesState,
   (state: NoteState) => state?.notes
 );
-
-export const selectNote = createSelector(
-  selectNotesState,
-  (state: NoteState) => state?.note
-)

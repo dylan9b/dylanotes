@@ -2,8 +2,6 @@
 
 <section class="app-notes-list">
   <div class="container">
-
-
     <div class="row mt-3 py-2">
       <div class="col-12 col-lg-4 mx-auto">
         <div class="row">
@@ -21,32 +19,32 @@
 
         <div class="row app-notes-list__items" *ngIf="!isLoading">
           <div class="col-12 mt-3" *ngFor="let item of allNotes$ | async; index as i">
-            <div class="app-notes-list__item" [@delete]="item?.isArchived ? 'delete' : 'void'">
-              <a [routerLink]="['/notes', item?._id]">
+            <div class="app-notes-list__item" [@delete]="item.isArchived ? 'delete' : 'void'">
+              <a [routerLink]="['/notes', item._id]">
                 <p class="app-notes-list__item__title">
                   {{ item?.title }}
                 </p>
                 <div class="app-notes-list__item__body">
-                  <div [innerHTML]="item?.body"></div>
+                  <div [innerHTML]="item.body"></div>
                 </div>
               </a>
               <span class="app-notes-list__item__remove" (click)="removeNote(item._id)">
-                <i class="fas fa-x"></i>
+                <mat-icon>close</mat-icon>
               </span>
 
               <div class="row">
                 <div class="col-12 d-flex align-items-center justify-content-between">
-                  <i matRipple (click)="pinNote(item)" [@pinUnpin]="item?.isPinned ? 'pinned' : 'unPinned'"
-                    class="fa-sharp fa-solid fa-thumbtack"></i>
+                  <mat-icon (click)="pinNote(item)" [@pinUnpin]="item.isPinned ? 'pinned' : 'unPinned'"
+                    aria-label="Pin Note">push_pin</mat-icon>
 
-                  <i matripple (click)="completeNote(item)" [@completeIncomplete]="
-                      item?.isComplete ? 'complete' : 'inComplete'
-                    " class="fa-solid fa-circle-check"></i>
+                  <mat-icon (click)="completeNote(item)" [@completeIncomplete]="
+                  item.isComplete ? 'complete' : 'inComplete'" aria-label="Complete Note">task_alt
+                  </mat-icon>
                 </div>
 
                 <div class="app-notes-list__item__footer">
                   <small>
-                    {{ item?.dateCreated | date : "short" }}
+                    {{ item.dateCreated | date : "short" }}
                   </small>
                 </div>
               </div>
@@ -76,13 +74,8 @@
             </a>
           </div>
         </div>
+
       </div>
     </div>
-
-    <!-- <div class="row mt-3 py-2 app-notes-list--rotate">
-      <div class="col-12">
-        <h2>Please rotate mobile.</h2>
-      </div>
-    </div> -->
   </div>
 </section>

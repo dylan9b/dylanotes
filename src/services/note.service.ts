@@ -72,7 +72,7 @@ export class NoteService {
       );
   }
 
-  deleteNote(id: string): Observable<INoteResponse> {
+  archiveNote(id: string): Observable<INoteResponse> {
     return this.http
       .delete<{ data: INoteResponse }>(`${this.baseUrl}/notes/${id}`, {
         body: { id: id },

@@ -6,7 +6,7 @@ import { Animations } from 'src/app/animations/animations';
 import { selectAllNotes } from 'src/state/notes/note.selectors';
 import { Store } from '@ngrx/store';
 import {
-  deleteNote,
+  archiveNote,
   loadNotes,
   updateNote,
 } from 'src/state/notes/note.actions';
@@ -27,7 +27,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class NotesListComponent implements OnInit {
   allNotes$ = this._store.select(selectAllNotes);
 
-  notes: INoteResponse[] = [];
   noteSteps = NotesStep;
   isEmptyResult: boolean = false;
   isLoading: boolean = false;
@@ -53,11 +52,11 @@ export class NotesListComponent implements OnInit {
    * @param id - The note id.
    */
   removeNote(id: string): void {
+    this._store.dispatch(archiveNote({ id }));
+
     this._snackBar.open('Note successfully deleted!', 'Success', {
       panelClass: 'status__200',
     });
-
-    this._store.dispatch(deleteNote({ id }));
   }
 
   /**

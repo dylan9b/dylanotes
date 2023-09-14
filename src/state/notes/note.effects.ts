@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { NoteService } from '@services/note.service';
-import { switchMap, from, map, catchError, of } from 'rxjs';
+import { switchMap, from, map, catchError, of, delay } from 'rxjs';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {
-  deleteNote,
-  deleteNoteFail,
+  archiveNote,
+  archiveNoteFail,
+  archiveNoteSuccess,
   deleteNoteSuccess,
   loadNote,
   loadNoteFail,
@@ -19,10 +20,19 @@ import {
   updateNoteFail,
   updateNoteSuccess,
 } from './note.actions';
+import { Store } from '@ngrx/store';
+import { AppState } from '../app.state';
+import { selectAllNotes } from './note.selectors';
 
 @Injectable()
 export class NoteEffects {
-  constructor(private actions$: Actions, private noteService: NoteService) {}
+  constructor(
+    private actions$: Actions,
+    private noteService: NoteService,
+    private _store: Store<AppState>
+  ) {}
+
+  allNotes$ = this._store.select(selectAllNotes);
 
   loadNotes$ = createEffect(() =>
     this.actions$.pipe(
@@ -60,15 +70,24 @@ export class NoteEffects {
     )
   );
 
-  deleteNote$ = createEffect(() =>
+  archiveNote$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(deleteNote),
+      ofType(archiveNote),
       switchMap((noteQuery) =>
-        from(this.noteService.deleteNote(noteQuery?.id)).pipe(
-          map((note) => deleteNoteSuccess({ note: note })),
-          catchError((error) => of(deleteNoteFail({ error })))
+        from(this.noteService.archiveNote(noteQuery?.id)).pipe(
+          map((note) => archiveNoteSuccess({ note: note })),
+          catchError((error) => of(archiveNoteFail({ error })))
         )
       )
+    )
+  );
+
+  deleteNote$ = createEffect(() =>
+    this.actions$.pipe(
+      // the delay must be the same as the animation we have :)
+      delay(150),
+      ofType(archiveNoteSuccess),
+      map((note) => deleteNoteSuccess(note))
     )
   );
 
