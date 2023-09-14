@@ -1,4 +1,10 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { INoteResponse } from '../item/_models/note-response.model';
 import { INoteRequest } from '../item/_models/note-request.model';
@@ -12,6 +18,8 @@ import {
 } from 'src/state/notes/note.actions';
 import { AppState } from 'src/state/app.state';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NoteItem } from '../item/_models/note-item.model';
 
 @Component({
   selector: 'app-notes-list',
@@ -30,6 +38,8 @@ export class NotesListComponent implements OnInit {
   noteSteps = NotesStep;
   isEmptyResult: boolean = false;
   isLoading: boolean = false;
+  notes!: INoteResponse[];
+  destroyRef = inject(DestroyRef);
 
   constructor(
     private _store: Store<AppState>,
@@ -38,12 +48,18 @@ export class NotesListComponent implements OnInit {
 
   ngOnInit(): void {
     this._store.dispatch(loadNotes({ searchTerm: '' }));
+
+    this.allNotes$
+      // .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((notes) => (this.notes = notes));
   }
 
   searchNotes(input: Event): void {
     const searchTerm = (input?.target as HTMLInputElement)?.value || '';
 
     this._store.dispatch(loadNotes({ searchTerm }));
+
+    this.allNotes$.subscribe((notes) => (this.notes = notes));
   }
 
   /**
@@ -65,16 +81,14 @@ export class NotesListComponent implements OnInit {
    * @param note - The note to pin.
    */
   pinNote(note: INoteResponse): void {
-    if (note) {
-      let updatedNote = {} as INoteRequest;
-      updatedNote = {
-        ...updatedNote,
-        _id: note?._id,
-        isPinned: !note?.isPinned,
-      };
+    let updatedNote = {} as INoteRequest;
+    updatedNote = {
+      ...updatedNote,
+      _id: note?._id,
+      isPinned: !note?.isPinned,
+    };
 
-      this._store.dispatch(updateNote({ note: updatedNote }));
-    }
+    this._store.dispatch(updateNote({ note: updatedNote }));
   }
 
   /**
@@ -91,5 +105,9 @@ export class NotesListComponent implements OnInit {
     };
 
     this._store.dispatch(updateNote({ note: updatedNote }));
+  }
+
+  noteTrackByFn(index: number, note: INoteResponse): string {
+    return note?._id;
   }
 }

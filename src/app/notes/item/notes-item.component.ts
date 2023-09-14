@@ -8,7 +8,7 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, of, switchMap, takeUntil } from 'rxjs';
+import { map, of, switchMap } from 'rxjs';
 import { Animations } from 'src/app/animations/animations';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { NotesItemFormControl } from './_models/note-item-form-control.model';
@@ -20,7 +20,7 @@ import { AppState } from '../../../state/app.state';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { selectAllNotes } from 'src/state/notes/note.selectors';
 import {
-  loadNote,
+  loadNotes,
   postNote,
   updateNote,
 } from '../../../state/notes/note.actions';
@@ -38,7 +38,7 @@ export class NotesItemComponent implements OnInit {
   noteSteps = NotesStep;
   note!: INoteResponse | null;
 
-  notes$ = this._store.select(selectAllNotes);
+  allNotes$ = this._store.select(selectAllNotes);
   destroyRef = inject(DestroyRef);
 
   constructor(
@@ -62,12 +62,11 @@ export class NotesItemComponent implements OnInit {
         }),
         switchMap((id) => {
           if (id) {
-            this._store.dispatch(loadNote({ id }));
-            return this.notes$.pipe(
-              switchMap((result) => {
-                return of(Object.values(result) as INoteResponse[]);
-              }),
+            this._store.dispatch(loadNotes({ searchTerm: '' }));
+
+            return this.allNotes$.pipe(
               switchMap((data) => {
+                console.log('data', data);
                 return of(data.find((d) => d._id === id));
               })
             );
@@ -143,7 +142,7 @@ export class NotesItemComponent implements OnInit {
 
     let updatedNote = {} as INoteRequest;
     updatedNote = {
-      ...(this.note!),
+      ...this.note!,
       title: rawForm?.title,
       body: rawForm?.body,
       dateModified: new Date().toJSON(),

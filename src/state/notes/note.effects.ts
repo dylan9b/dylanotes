@@ -6,13 +6,9 @@ import {
   archiveNote,
   archiveNoteFail,
   archiveNoteSuccess,
-  deleteNoteSuccess,
-  loadNote,
-  loadNoteFail,
   loadNotes,
   loadNotesFail,
   loadNotesSuccess,
-  loadNoteSuccess,
   postNote,
   postNoteFail,
   postNoteSuccess,
@@ -46,18 +42,6 @@ export class NoteEffects {
     )
   );
 
-  loadNote$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(loadNote),
-      switchMap((noteQuery) =>
-        from(this.noteService.getNote(noteQuery?.id)).pipe(
-          map((note) => loadNoteSuccess({ note: note })),
-          catchError((error) => of(loadNoteFail({ error })))
-        )
-      )
-    )
-  );
-
   updateNote$ = createEffect(() =>
     this.actions$.pipe(
       ofType(updateNote),
@@ -79,15 +63,6 @@ export class NoteEffects {
           catchError((error) => of(archiveNoteFail({ error })))
         )
       )
-    )
-  );
-
-  deleteNote$ = createEffect(() =>
-    this.actions$.pipe(
-      // the delay must be the same as the animation we have :)
-      delay(150),
-      ofType(archiveNoteSuccess),
-      map((note) => deleteNoteSuccess(note))
     )
   );
 

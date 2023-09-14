@@ -24,13 +24,6 @@ export const Animations = {
         color: '#cccccc',
       })
     ),
-    state(
-      '*',
-      style({
-        color: '#cccccc',
-        transform: 'scale(1.1)',
-      })
-    ),
     transition('pinned <=> unPinned', [
       style({
         transform: 'scale(0)',
@@ -38,22 +31,6 @@ export const Animations = {
       }),
       animate('0.15s'),
     ]),
-
-    // transition('* => pinned', [
-    //   style({
-    //     transform: 'scale(0)',
-    //     opacity: '0',
-    //   }),
-    //   animate('0.15s'),
-    // ]),
-
-    // transition('* => unPinned', [
-    //   style({
-    //     transform: 'scale(0)',
-    //     opacity: '0',
-    //   }),
-    //   animate('0.15s'),
-    // ]),
   ]),
 
   completeIncomplete: trigger('completeIncomplete', [
@@ -73,13 +50,6 @@ export const Animations = {
         color: '#cccccc',
       })
     ),
-    // state(
-    //   '*',
-    //   style({
-    //     color: '#cccccc',
-    //     transform: 'scale(1.1)',
-    //   })
-    // ),
 
     transition('inComplete <=> complete', [
       style({
@@ -88,22 +58,6 @@ export const Animations = {
       }),
       animate('0.15s'),
     ]),
-
-    // transition('* => complete', [
-    //   style({
-    //     transform: 'scale(0)',
-    //     opacity: '0',
-    //   }),
-    //   animate('0.15s'),
-    // ]),
-
-    // transition('* => inComplete', [
-    //   style({
-    //     transform: 'scale(0)',
-    //     opacity: '0',
-    //   }),
-    //   animate('0.15s'),
-    // ]),
   ]),
 
   delete: trigger('delete', [
@@ -112,6 +66,9 @@ export const Animations = {
       style({
         opacity: '0',
         transform: 'scale(0)',
+        height: '0px',
+        padding: '0px',
+        'margin-top': '0px',
       })
     ),
     transition('void => delete', [

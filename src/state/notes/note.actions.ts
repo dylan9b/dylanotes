@@ -18,20 +18,6 @@ export const loadNotesFail = createAction(
   props<{ error: string }>()
 );
 
-// GET NOTE
-export const loadNote = createAction(
-  `${noteKey} Load Note`,
-  props<{ id: string }>()
-);
-export const loadNoteSuccess = createAction(
-  `${noteKey} Load Note: Success`,
-  props<{ note: INoteResponse }>()
-);
-export const loadNoteFail = createAction(
-  `${noteKey} Load Note: Fail`,
-  props<{ error: string }>()
-);
-
 // UPDATE NOTE - ITEM
 export const updateNoteInList = createAction(
   `${noteKey} Update Note in List`,
@@ -72,12 +58,6 @@ export const archiveNoteSuccess = createAction(
 export const archiveNoteFail = createAction(
   `${noteKey} Archive Note: Fail`,
   props<{ error: string }>()
-);
-
-// DELETE NOTE FROM LIST
-export const deleteNoteSuccess = createAction(
-  `${noteKey} Delete Note: Success`,
-  props<{ note: INoteResponse }>()
 );
 
 // POST NOTE

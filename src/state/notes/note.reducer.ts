@@ -4,13 +4,9 @@ import {
   archiveNote,
   archiveNoteFail,
   archiveNoteSuccess,
-  deleteNoteSuccess,
-  loadNote,
-  loadNoteFail,
   loadNotes,
   loadNotesFail,
   loadNotesSuccess,
-  loadNoteSuccess,
   postNote,
   postNoteFail,
   postNoteSuccess,
@@ -45,29 +41,32 @@ export const noteReducer = createReducer(
   })),
 
   // GET NOTE
-  on(loadNote, (state) => ({ ...state, status: 'loading' })),
-  on(loadNoteSuccess, (state, { note }) => ({
-    ...state,
-    error: null,
-    status: 'success',
-  })),
-  on(loadNoteFail, (state, { error }) => ({
-    ...state,
-    error: error,
-    status: 'error',
-  })),
+  // on(loadNote, (state) => ({ ...state, status: 'loading' })),
+  // on(loadNoteSuccess, (state, { note }) => ({
+  //   ...state,
+  //   error: null,
+  //   status: 'success',
+  // })),
+  // on(loadNoteFail, (state, { error }) => ({
+  //   ...state,
+  //   error: error,
+  //   status: 'error',
+  // })),
 
   // UPDATE NOTE
   on(updateNote, (state) => ({ ...state, status: 'loading' })),
   on(updateNoteSuccess, (state, { note }) => {
-    const { _id } = note;
+    const updatedNotes = state.notes.map((item) => {
+      if (item?._id === note?._id) {
+        item = { ...note };
+        return item;
+      }
+      return item;
+    });
 
     return {
       ...state,
-      notes: {
-        ...state.notes,
-        [_id]: note,
-      },
+      notes: updatedNotes,
       error: null,
       status: 'success',
     };
@@ -81,8 +80,6 @@ export const noteReducer = createReducer(
   // ARCHIVE NOTE
   on(archiveNote, (state) => ({ ...state, status: 'loading' })),
   on(archiveNoteSuccess, (state, { note }) => {
-    const { _id } = note;
-
     note = {
       ...note,
       isArchived: true,
@@ -108,16 +105,6 @@ export const noteReducer = createReducer(
     error: error,
     status: 'error',
   })),
-
-  // DELETE NOTE
-  on(deleteNoteSuccess, (state, { note }) => {
-    const updatedNotes = state.notes.filter((item) => item?._id !== note?._id);
-
-    return {
-      ...state,
-      notes: updatedNotes,
-    };
-  }),
 
   // POST NOTE
   on(postNote, (state) => ({ ...state, status: 'loading' })),
