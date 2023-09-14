@@ -39,7 +39,7 @@ router.route("/list").get((req, res, next) => {
       } else {
         res.json({ data: data });
       }
-    });
+    }).sort({ dateModified: -1 });
   }
 });
 

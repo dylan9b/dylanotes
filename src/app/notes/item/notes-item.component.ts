@@ -8,7 +8,7 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, of, switchMap } from 'rxjs';
+import { map, of, switchMap, take, takeLast } from 'rxjs';
 import { Animations } from 'src/app/animations/animations';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { NotesItemFormControl } from './_models/note-item-form-control.model';
@@ -66,7 +66,6 @@ export class NotesItemComponent implements OnInit {
 
             return this.allNotes$.pipe(
               switchMap((data) => {
-                console.log('data', data);
                 return of(data.find((d) => d._id === id));
               })
             );
@@ -134,7 +133,7 @@ export class NotesItemComponent implements OnInit {
       panelClass: 'status__200',
     });
 
-    // this._router.navigate(['/notes', 'list']);
+    this._router.navigate(['/notes', 'list']);
   }
 
   private editNote(): void {

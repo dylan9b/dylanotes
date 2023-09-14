@@ -18,8 +18,6 @@ import {
 } from 'src/state/notes/note.actions';
 import { AppState } from 'src/state/app.state';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NoteItem } from '../item/_models/note-item.model';
 
 @Component({
   selector: 'app-notes-list',
@@ -38,7 +36,6 @@ export class NotesListComponent implements OnInit {
   noteSteps = NotesStep;
   isEmptyResult: boolean = false;
   isLoading: boolean = false;
-  notes!: INoteResponse[];
   destroyRef = inject(DestroyRef);
 
   constructor(
@@ -48,18 +45,12 @@ export class NotesListComponent implements OnInit {
 
   ngOnInit(): void {
     this._store.dispatch(loadNotes({ searchTerm: '' }));
-
-    this.allNotes$
-      // .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((notes) => (this.notes = notes));
   }
 
   searchNotes(input: Event): void {
     const searchTerm = (input?.target as HTMLInputElement)?.value || '';
 
     this._store.dispatch(loadNotes({ searchTerm }));
-
-    this.allNotes$.subscribe((notes) => (this.notes = notes));
   }
 
   /**

@@ -19,8 +19,7 @@
 
         <div class="row app-notes-list__items" *ngIf="!isLoading">
 
-          <ng-container *ngFor="let note of notes; let i = index; trackBy: noteTrackByFn">
-            <!-- <div [ngClass]="!note?.isArchived ? 'col-12 mt-3' : 'd-none'"> -->
+          <ng-container *ngFor="let note of allNotes$ | async; let i = index; trackBy: noteTrackByFn">
             <div class="col-12 app-notes-list__item" [@delete]="note?.isArchived ? 'delete' : 'void'">
 
               <a [routerLink]="['/notes', note._id]">
@@ -51,44 +50,8 @@
                   </small>
                 </div>
               </div>
-
-              <!-- </div> -->
             </div>
           </ng-container>
-
-          <!-- <div class="app-notes-list__item" [@delete]="notes[0]?.isArchived ? 'delete' : 'void'">
-            <a [routerLink]="['/notes', notes[0]?._id]">
-              <p class="app-notes-list__item__title">
-                {{ notes[0]?.title }}
-              </p>
-              <div class="app-notes-list__item__body">
-                <div [innerHTML]="notes[0]?.body"></div>
-              </div>
-            </a>
-            <span class="app-notes-list__item__remove" (click)="removeNote(notes[0]._id)">
-              <mat-icon>close</mat-icon>
-            </span>
-
-            <div class="row">
-              <div class="col-12 d-flex align-items-center justify-content-between">
-                isPinned: {{notes[0]?.isPinned}}
-                <mat-icon (click)="pinNote(notes[0])" [@pinUnpin]="notes[0]?.isPinned ? 'pinned' : 'unPinned'"
-                  aria-label="Pin Note">push_pin</mat-icon>
-
-                <mat-icon (click)="completeNote(notes[0])" [@completeIncomplete]="
-                notes[0]?.isComplete ? 'complete' : 'inComplete'" aria-label="Complete Note">task_alt
-                </mat-icon>
-              </div>
-
-              <div class="app-notes-list__item__footer">
-                <small>
-                  {{ notes[0]?.dateCreated | date : "short" }}
-                </small>
-              </div>
-            </div>
-          </div> -->
-
-
         </div>
 
         <div *ngIf="!isLoading && isEmptyResult">

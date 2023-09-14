@@ -31,3 +31,8 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 ### angular.json -> serve -> options -> set 'port' and 'host' attributes
 ### index.js -> set current ip address
 ### environmet -> set the BASE_URL to the current ip address
+
+
+## TODO item
+### - Convert the REST apis to graphql 
+### - Convert lists in ngrx state to objects as they are much faster to access { [id] : object }
