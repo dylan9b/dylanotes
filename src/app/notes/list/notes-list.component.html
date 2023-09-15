@@ -20,36 +20,40 @@
         <div class="row app-notes-list__items" *ngIf="!isLoading">
 
           <ng-container *ngFor="let note of allNotes$ | async; let i = index; trackBy: noteTrackByFn">
-            <div class="col-12 app-notes-list__item" [@delete]="note?.isArchived ? 'delete' : 'void'">
+            <!-- <div class="col-12 app-notes-list__item" [@delete]="note?.isArchived ? 'delete' : 'void'"> -->
+            <div class="col-12 app-notes-list__item" (click)="onNoteItemClick(note)"
+              [@selectNote]="note?.isSelected ? 'selectNote' : 'void'"
+              (@selectNote.done)="onSelectNoteAnimationEnd(note)">
 
-              <a [routerLink]="['/notes', note._id]">
+              <a>
+
+                <div class="app-notes-list__item__footer">
+                  <mat-icon class="app-notes-list__item__icon me-1" (click)="pinNote(note)"
+                    [@pinUnpin]="note?.isPinned ? 'pinned' : 'unPinned'" aria-label="Pin Note">
+                    push_pin
+                  </mat-icon>
+
+                  <mat-icon class="app-notes-list__item__icon" (click)="completeNote(note)"
+                    [@completeIncomplete]="note?.isComplete ? 'complete' : 'inComplete'" aria-label="Complete Note">
+                    task_alt
+                  </mat-icon>
+
+                  <small class="ms-3">
+                    {{ note?.dateCreated | date : "short" }}
+                  </small>
+                </div>
                 <p class="app-notes-list__item__title">
                   {{ note?.title }}
+
+                  <!-- <span class="app-notes-list__item__remove" (click)="removeNote(note._id)">
+                    <mat-icon>close</mat-icon>
+                  </span> -->
                 </p>
                 <div class="app-notes-list__item__body">
                   <div [innerHTML]="note?.body"></div>
                 </div>
               </a>
-              <span class="app-notes-list__item__remove" (click)="removeNote(note._id)">
-                <mat-icon>close</mat-icon>
-              </span>
 
-              <div class="row">
-                <div class="col-12 d-flex align-items-center justify-content-between">
-                  <mat-icon (click)="pinNote(note)" [@pinUnpin]="note?.isPinned ? 'pinned' : 'unPinned'"
-                    aria-label="Pin Note">push_pin</mat-icon>
-
-                  <mat-icon (click)="completeNote(note)" [@completeIncomplete]="
-                note?.isComplete ? 'complete' : 'inComplete'" aria-label="Complete Note">task_alt
-                  </mat-icon>
-                </div>
-
-                <div class="app-notes-list__item__footer">
-                  <small>
-                    {{ note?.dateCreated | date : "short" }}
-                  </small>
-                </div>
-              </div>
             </div>
           </ng-container>
         </div>
@@ -66,16 +70,14 @@
           </div>
         </div>
 
-        <div class="row" *ngIf="!isLoading">
-          <div class="col-12 mt-3">
-            <a [routerLink]="['/notes', 'new']" class="app-notes-list__add">
-              <button matRipple type="button">
-                <i class="fas fa-plus"></i>
-                Add
-              </button>
-            </a>
-          </div>
-        </div>
+        <!-- ADD CTA - START -->
+        <button matRipple type="button" class="app-notes-list__add" (click)="isAddNoteClicked = true"
+          [@addNote]="isAddNoteClicked ? 'addNote' : 'void'" (@addNote.done)="onAddNoteAnimationEnd()">
+          <mat-icon matRipple class="app-notes-list__item__add__cta" aria-label="New Note">
+            add
+          </mat-icon>
+        </button>
+        <!-- ADD CTA - END -->
 
       </div>
     </div>

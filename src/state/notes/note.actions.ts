@@ -1,6 +1,7 @@
 import { createAction, props } from '@ngrx/store';
-import { INoteResponse } from 'src/app/notes/item/_models/note-response.model';
+
 import { INoteRequest } from 'src/app/notes/item/_models/note-request.model';
+import { INoteResponse } from 'src/app/notes/item/_models/note-response.model';
 
 export const noteKey = '[NOTES]';
 
@@ -71,5 +72,19 @@ export const postNoteSuccess = createAction(
 );
 export const postNoteFail = createAction(
   `${noteKey} Post Note: Fail`,
+  props<{ error: string }>()
+);
+
+// SELCT NOTE
+export const selectNote = createAction(
+  `${noteKey} Select Note`,
+  props<{ note: INoteResponse }>()
+);
+export const selectNoteSuccess = createAction(
+  `${noteKey} Select Note: Success`,
+  props<{ note: INoteResponse }>()
+);
+export const selectNoteFail = createAction(
+  `${noteKey} Select Note: Fail`,
   props<{ error: string }>()
 );

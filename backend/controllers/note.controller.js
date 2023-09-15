@@ -31,12 +31,13 @@ router.route("/list").get((req, res, next) => {
           res.json({ data: data });
         }
       }
-    );
+    ).sort({ dateModified: -1 });
   } else {
     Note.find({ isArchived: false }, (error, data) => {
       if (error) {
         return next(error);
       } else {
+        data.
         res.json({ data: data });
       }
     }).sort({ dateModified: -1 });

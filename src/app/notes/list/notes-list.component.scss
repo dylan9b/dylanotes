@@ -12,37 +12,44 @@
   }
 
   &__add {
+    // text-decoration: none;
+    // position: absolute;
+    // bottom: 20px;
+    // right: 20px;
+
+    // button {
     text-decoration: none;
-    button {
-      background-color: $purple;
-      border-radius: 5px;
-      border: 1px solid $purple;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: $purple;
+    border-radius: 50%;
+    border: 1px solid $purple;
+    color: white;
+    // transition: 0.2s ease all;
+    padding: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    i {
+      // transition: 0.2s ease all;
+      margin-right: 15px;
       color: white;
-      transition: 0.2s ease all;
-      padding: 15px 20px;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-
-      i {
-        transition: 0.2s ease all;
-        margin-right: 15px;
-        color: white;
-      }
-
-      &:hover {
-        transition: 0.2s ease all;
-        color: $purple;
-        border: 1px solid $purple;
-        background: white;
-
-        i {
-          color: $purple;
-        }
-      }
     }
+
+    // &:hover {
+    //   transition: 0.2s ease all;
+    //   color: $purple;
+    //   border: 1px solid $purple;
+    //   background: white;
+
+    //   i {
+    //     color: $purple;
+    //   }
+    // }
+    // }
   }
 
   &__filter {
@@ -74,7 +81,7 @@
     overflow-x: hidden;
     overflow-y: auto;
 
-    @include media-breakpoint-down(sm) {
+    @include media-breakpoint-down(xl) {
       max-height: 65vh;
     }
 
@@ -87,8 +94,22 @@
     position: relative;
     background: white;
     border-radius: 5px;
-    padding: 25px;
+    padding: 15px;
     margin-top: 15px;
+
+    border: 1px solid rgba(black, 0.068);
+    &__icon {
+      font-size: 12px;
+      height: 12px !important;
+      width: 12px !important;
+    }
+
+    &__footer {
+      font-size: 10px;
+      color: #555;
+      display: flex;
+      align-items: center;
+    }
 
     &:hover {
       box-shadow: 0px 2px 15px 2px rgba(black, 0.068);
@@ -97,9 +118,14 @@
 
     &__title {
       margin: 0;
+      margin-top: 20px !important;
       font-size: 22px;
       font-weight: bold;
       color: $purple;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     &__body {
@@ -109,22 +135,6 @@
       overflow: hidden;
       position: relative;
       color: #555;
-
-      &:after {
-        content: "";
-        left: 0;
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        height: 50%;
-        pointer-events: none;
-        background: linear-gradient(
-          to bottom,
-          rgba(white, 0) 0%,
-          rgba(white, 0.8) 50%,
-          white 100%
-        );
-      }
     }
 
     &__remove {
@@ -149,13 +159,3 @@
     }
   }
 }
-
-// @include media-breakpoint-down(sm) {
-//   .app-notes-list {
-//     display: none;
-
-//     &--rotate {
-//       display: block;
-//     }
-//   }
-// }

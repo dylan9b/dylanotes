@@ -13,8 +13,10 @@ import { INoteResponse } from '../item/_models/note-response.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoteUtilService } from '@services/note-util.service';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { selectAllNotes } from 'src/state/notes/note.selectors';
+import { selectNote } from '../../../state/notes/note.actions';
 
 @Component({
   selector: 'app-notes-list',
@@ -24,6 +26,8 @@ import { selectAllNotes } from 'src/state/notes/note.selectors';
     Animations.pinUnpin,
     Animations.completeIncomplete,
     Animations.delete,
+    Animations.selectNote,
+    Animations.addNote,
   ],
   encapsulation: ViewEncapsulation.None,
 })
@@ -35,10 +39,13 @@ export class NotesListComponent implements OnInit {
   isLoading: boolean = false;
   destroyRef = inject(DestroyRef);
 
+  isAddNoteClicked: boolean = false;
+
   constructor(
     private _store: Store<AppState>,
     private _snackBar: MatSnackBar,
-    private _noteUtilService: NoteUtilService
+    private _noteUtilService: NoteUtilService,
+    private _router: Router
   ) {}
 
   ngOnInit(): void {
@@ -62,6 +69,23 @@ export class NotesListComponent implements OnInit {
     this._snackBar.open('Note successfully deleted!', 'Success', {
       panelClass: 'status__200',
     });
+  }
+
+  onNoteItemClick(note: INoteResponse): void {
+    this._store.dispatch(selectNote({ note }));
+  }
+
+  onSelectNoteAnimationEnd(note: INoteResponse): void {
+    if (note?.isSelected) {
+      this._router.navigate(['/notes', note?._id]);
+    }
+  }
+
+  onAddNoteAnimationEnd(): void {
+    if (this.isAddNoteClicked) {
+      this._router.navigate(['/notes', 'new']);
+      this.isAddNoteClicked = !this.isAddNoteClicked;
+    }
   }
 
   /**

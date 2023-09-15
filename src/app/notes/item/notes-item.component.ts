@@ -38,7 +38,7 @@ export class NotesItemComponent implements OnInit {
   form!: FormGroup;
   validation!: NotesItemValidation | null;
   noteSteps = NotesStep;
-  note!: INoteResponse | null;
+  note!: INoteResponse;
 
   allNotes$ = this._store.select(selectAllNotes);
   destroyRef = inject(DestroyRef);

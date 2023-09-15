@@ -16,7 +16,7 @@ export class NoteUtilService {
    *
    * @param note - The note to pin.
    */
-  pinNote(note: INoteResponse | null): void {
+  pinNote(note: INoteResponse): void {
     if (note) {
       let updatedNote = {} as INoteRequest;
       updatedNote = {
@@ -34,7 +34,7 @@ export class NoteUtilService {
    *
    * @param note - The note to complete.
    */
-  completeNote(note: INoteResponse | null): void {
+  completeNote(note: INoteResponse): void {
     if (note) {
       let updatedNote = {} as INoteRequest;
       updatedNote = {

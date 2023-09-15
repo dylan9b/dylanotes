@@ -1,9 +1,10 @@
 import {
-  trigger,
+  animate,
+  keyframes,
   state,
   style,
   transition,
-  animate,
+  trigger
 } from '@angular/animations';
 
 export const Animations = {
@@ -77,6 +78,38 @@ export const Animations = {
         transform: 'scale(1.1)',
       }),
       animate('0.15s'),
+    ]),
+  ]),
+
+  selectNote: trigger('selectNote', [
+    transition('void => selectNote', [
+      animate(
+        '0.15s',
+        keyframes([
+          style({ transform: 'scale(1)' }),
+          style({ transform: 'scale(0.9)' }),
+          style({ transform: 'scale(1)' }),
+        ])
+      ),
+    ]),
+  ]),
+
+  addNote: trigger('addNote', [
+    transition('void => addNote', [
+      animate(
+        '0.15s',
+        keyframes([
+          style({ transform: 'scale(1)' }),
+          style({
+            transform: 'scale(0.9)',
+            filter: 'brightness(0.55)',
+          }),
+          style({
+            transform: 'scale(1)',
+            filter: 'brightness(1)',
+          }),
+        ])
+      ),
     ]),
   ]),
 };

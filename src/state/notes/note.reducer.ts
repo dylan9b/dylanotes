@@ -1,5 +1,3 @@
-import { NoteState } from './notes.state';
-import { createReducer, on } from '@ngrx/store';
 import {
   archiveNote,
   archiveNoteFail,
@@ -10,10 +8,16 @@ import {
   postNote,
   postNoteFail,
   postNoteSuccess,
+  selectNote,
+  selectNoteFail,
+  selectNoteSuccess,
   updateNote,
   updateNoteFail,
-  updateNoteSuccess,
+  updateNoteSuccess
 } from './note.actions';
+import { createReducer, on } from '@ngrx/store';
+
+import { NoteState } from './notes.state';
 
 export const initialState: NoteState = {
   notes: [],
@@ -27,9 +31,22 @@ export const noteReducer = createReducer(
   // GET NOTES
   on(loadNotes, (state) => ({ ...state, status: 'loading' })),
   on(loadNotesSuccess, (state, { notes }) => {
-    return {
+    debugger;
+    state = {
       ...state,
       notes: notes,
+    };
+
+    const updatedNotes = state.notes.map((item) => {
+      return {
+        ...item,
+        isSelected: false,
+      };
+    });
+
+    return {
+      ...state,
+      notes: updatedNotes,
       error: null,
       status: 'success',
     };
@@ -39,19 +56,6 @@ export const noteReducer = createReducer(
     error: error,
     status: 'error',
   })),
-
-  // GET NOTE
-  // on(loadNote, (state) => ({ ...state, status: 'loading' })),
-  // on(loadNoteSuccess, (state, { note }) => ({
-  //   ...state,
-  //   error: null,
-  //   status: 'success',
-  // })),
-  // on(loadNoteFail, (state, { error }) => ({
-  //   ...state,
-  //   error: error,
-  //   status: 'error',
-  // })),
 
   // UPDATE NOTE
   on(updateNote, (state) => ({ ...state, status: 'loading' })),
@@ -111,12 +115,43 @@ export const noteReducer = createReducer(
   on(postNoteSuccess, (state, { note }) => {
     return {
       ...state,
-      notes: { ...note, ...state.notes },
+      notes: [note, ...state.notes],
       error: null,
       status: 'success',
     };
   }),
   on(postNoteFail, (state, { error }) => ({
+    ...state,
+    error: error,
+    status: 'error',
+  })),
+
+  // SELECT NOTE
+  on(selectNote, (state) => ({ ...state, status: 'loading' })),
+  on(selectNoteSuccess, (state, { note }) => {
+    const updatedNotes = state.notes.map((item) => {
+      if (item?._id === note?._id) {
+        item = {
+          ...item,
+          isSelected: true,
+        };
+      } else {
+        item = {
+          ...item,
+          isSelected: false,
+        };
+      }
+      return item;
+    });
+
+    return {
+      ...state,
+      notes: updatedNotes,
+      error: null,
+      status: 'success',
+    };
+  }),
+  on(selectNoteFail, (state, { error }) => ({
     ...state,
     error: error,
     status: 'error',
