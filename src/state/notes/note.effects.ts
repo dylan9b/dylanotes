@@ -23,18 +23,18 @@ import { selectAllNotes } from './note.selectors';
 @Injectable()
 export class NoteEffects {
   constructor(
-    private actions$: Actions,
-    private noteService: NoteService,
+    private _actions$: Actions,
+    private _noteService: NoteService,
     private _store: Store<AppState>
   ) {}
 
   allNotes$ = this._store.select(selectAllNotes);
 
   loadNotes$ = createEffect(() =>
-    this.actions$.pipe(
+    this._actions$.pipe(
       ofType(loadNotes),
       switchMap((notesQuery) =>
-        from(this.noteService.getNotes(notesQuery?.searchTerm)).pipe(
+        from(this._noteService.getNotes(notesQuery?.searchTerm)).pipe(
           map((notes) => loadNotesSuccess({ notes: notes })),
           catchError((error) => of(loadNotesFail({ error })))
         )
@@ -43,10 +43,10 @@ export class NoteEffects {
   );
 
   updateNote$ = createEffect(() =>
-    this.actions$.pipe(
+    this._actions$.pipe(
       ofType(updateNote),
       switchMap((noteQuery) =>
-        from(this.noteService.putNote(noteQuery?.note)).pipe(
+        from(this._noteService.putNote(noteQuery?.note)).pipe(
           map((note) => updateNoteSuccess({ note: note })),
           catchError((error) => of(updateNoteFail({ error })))
         )
@@ -55,10 +55,10 @@ export class NoteEffects {
   );
 
   archiveNote$ = createEffect(() =>
-    this.actions$.pipe(
+    this._actions$.pipe(
       ofType(archiveNote),
       switchMap((noteQuery) =>
-        from(this.noteService.archiveNote(noteQuery?.id)).pipe(
+        from(this._noteService.archiveNote(noteQuery?.id)).pipe(
           map((note) => archiveNoteSuccess({ note: note })),
           catchError((error) => of(archiveNoteFail({ error })))
         )
@@ -67,10 +67,10 @@ export class NoteEffects {
   );
 
   postNote$ = createEffect(() =>
-    this.actions$.pipe(
+    this._actions$.pipe(
       ofType(postNote),
       switchMap((noteQuery) =>
-        from(this.noteService.postNote(noteQuery?.note)).pipe(
+        from(this._noteService.postNote(noteQuery?.note)).pipe(
           map((note) => postNoteSuccess({ note: note })),
           catchError((error) => of(postNoteFail({ error })))
         )

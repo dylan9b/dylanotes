@@ -1,23 +1,20 @@
 import {
   Component,
   DestroyRef,
-  inject,
   OnInit,
   ViewEncapsulation,
+  inject
 } from '@angular/core';
-import { NotesStep } from 'src/app/header/_models/header-input.model';
-import { INoteResponse } from '../item/_models/note-response.model';
-import { INoteRequest } from '../item/_models/note-request.model';
+import { archiveNote, loadNotes } from 'src/state/notes/note.actions';
+
 import { Animations } from 'src/app/animations/animations';
-import { selectAllNotes } from 'src/state/notes/note.selectors';
-import { Store } from '@ngrx/store';
-import {
-  archiveNote,
-  loadNotes,
-  updateNote,
-} from 'src/state/notes/note.actions';
 import { AppState } from 'src/state/app.state';
+import { INoteResponse } from '../item/_models/note-response.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { NoteUtilService } from '@services/note-util.service';
+import { NotesStep } from 'src/app/header/_models/header-input.model';
+import { Store } from '@ngrx/store';
+import { selectAllNotes } from 'src/state/notes/note.selectors';
 
 @Component({
   selector: 'app-notes-list',
@@ -40,7 +37,8 @@ export class NotesListComponent implements OnInit {
 
   constructor(
     private _store: Store<AppState>,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    private _noteUtilService: NoteUtilService
   ) {}
 
   ngOnInit(): void {
@@ -72,14 +70,7 @@ export class NotesListComponent implements OnInit {
    * @param note - The note to pin.
    */
   pinNote(note: INoteResponse): void {
-    let updatedNote = {} as INoteRequest;
-    updatedNote = {
-      ...updatedNote,
-      _id: note?._id,
-      isPinned: !note?.isPinned,
-    };
-
-    this._store.dispatch(updateNote({ note: updatedNote }));
+    this._noteUtilService.pinNote(note);
   }
 
   /**
@@ -88,16 +79,16 @@ export class NotesListComponent implements OnInit {
    * @param note - The note to complete.
    */
   completeNote(note: INoteResponse): void {
-    let updatedNote = {} as INoteRequest;
-    updatedNote = {
-      ...updatedNote,
-      _id: note?._id,
-      isComplete: !note?.isComplete,
-    };
-
-    this._store.dispatch(updateNote({ note: updatedNote }));
+    this._noteUtilService.completeNote(note);
   }
 
+  /**
+   * Tracking note function to be used in the for loop.
+   *
+   * @param index - The index position ofthe note.
+   * @param note - The actual note.
+   * @returns { string } - The note id.
+   */
   noteTrackByFn(index: number, note: INoteResponse): string {
     return note?._id;
   }

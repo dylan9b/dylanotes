@@ -2,5 +2,9 @@
   "prettier.bracketSameLine": false,
   "prettier.htmlWhitespaceSensitivity": "strict",
   "prettier.requireConfig": true,
-  "prettier.singleQuote": true
+  "prettier.singleQuote": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
+  },
 }
