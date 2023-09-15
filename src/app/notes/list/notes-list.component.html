@@ -17,12 +17,10 @@
           </div>
         </div>
 
-        <div class="row app-notes-list__items" *ngIf="!isLoading">
-
+        <div class="row app-notes-list__items" *ngIf="(status$ | async) as status">
           <ng-container *ngFor="let note of allNotes$ | async; let i = index; trackBy: noteTrackByFn">
-            <!-- <div class="col-12 app-notes-list__item" [@delete]="note?.isArchived ? 'delete' : 'void'"> -->
-            <div class="col-12 app-notes-list__item" (click)="onNoteItemClick(note)"
-              [@selectNote]="note?.isSelected ? 'selectNote' : 'void'"
+            <div class="col-12 app-notes-list__item" (click)="onNoteItemClick(note, status)"
+              [@delete]="note?.isArchived ? 'delete' : 'void'" [@selectNote]="note?.isSelected ? 'selectNote' : 'void'"
               (@selectNote.done)="onSelectNoteAnimationEnd(note)">
 
               <a>
@@ -45,15 +43,14 @@
                 <p class="app-notes-list__item__title">
                   {{ note?.title }}
 
-                  <!-- <span class="app-notes-list__item__remove" (click)="removeNote(note._id)">
+                  <span class="app-notes-list__item__remove" (click)="removeNote(note._id)">
                     <mat-icon>close</mat-icon>
-                  </span> -->
+                  </span>
                 </p>
                 <div class="app-notes-list__item__body">
                   <div [innerHTML]="note?.body"></div>
                 </div>
               </a>
-
             </div>
           </ng-container>
         </div>

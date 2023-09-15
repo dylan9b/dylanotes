@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { selectAllNotes } from 'src/state/notes/note.selectors';
 import { selectNote } from '../../../state/notes/note.actions';
+import { selectStatus } from '../../../state/notes/note.selectors';
 
 @Component({
   selector: 'app-notes-list',
@@ -33,6 +34,7 @@ import { selectNote } from '../../../state/notes/note.actions';
 })
 export class NotesListComponent implements OnInit {
   allNotes$ = this._store.select(selectAllNotes);
+  status$ = this._store.select(selectStatus);
 
   noteSteps = NotesStep;
   isEmptyResult: boolean = false;
@@ -71,8 +73,15 @@ export class NotesListComponent implements OnInit {
     });
   }
 
-  onNoteItemClick(note: INoteResponse): void {
-    this._store.dispatch(selectNote({ note }));
+  onNoteItemClick(note: INoteResponse, status: string): void {
+    if (status !== 'loading') {
+      note = {
+        ...note,
+        isSelected: true,
+      };
+
+      this._store.dispatch(selectNote({ note }));
+    }
   }
 
   onSelectNoteAnimationEnd(note: INoteResponse): void {

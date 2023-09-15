@@ -133,12 +133,11 @@ export const noteReducer = createReducer(
       if (item?._id === note?._id) {
         item = {
           ...item,
-          isSelected: true,
+          ...note,
         };
       } else {
         item = {
           ...item,
-          isSelected: false,
         };
       }
       return item;
