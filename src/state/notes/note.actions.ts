@@ -3,8 +3,6 @@ import { createActionGroup, props } from '@ngrx/store';
 import { INoteRequest } from 'src/app/notes/item/_models/note-request.model';
 import { INoteResponse } from 'src/app/notes/item/_models/note-response.model';
 
-// export const noteKey = '[NOTES]';
-
 export const noteActions = createActionGroup({
   source: '[NOTES]',
   events: {
