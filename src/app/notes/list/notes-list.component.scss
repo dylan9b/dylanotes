@@ -12,12 +12,6 @@
   }
 
   &__add {
-    // text-decoration: none;
-    // position: absolute;
-    // bottom: 20px;
-    // right: 20px;
-
-    // button {
     text-decoration: none;
     position: absolute;
     bottom: 20px;
@@ -26,7 +20,6 @@
     border-radius: 50%;
     border: 1px solid $purple;
     color: white;
-    // transition: 0.2s ease all;
     padding: 15px;
     display: flex;
     flex-direction: row;
@@ -34,22 +27,18 @@
     justify-content: center;
 
     i {
-      // transition: 0.2s ease all;
       margin-right: 15px;
       color: white;
     }
+  }
 
-    // &:hover {
-    //   transition: 0.2s ease all;
-    //   color: $purple;
-    //   border: 1px solid $purple;
-    //   background: white;
-
-    //   i {
-    //     color: $purple;
-    //   }
-    // }
-    // }
+  &__search {
+    @extend .app-notes-list__add;
+    bottom: unset;
+    top: 70px;
+    background-color: $eggplant;
+    border-color: $eggplant;
+    filter: brightness(1.5);
   }
 
   &__filter {

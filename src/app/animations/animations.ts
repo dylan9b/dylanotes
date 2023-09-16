@@ -94,8 +94,8 @@ export const Animations = {
     ]),
   ]),
 
-  addNote: trigger('addNote', [
-    transition('void => addNote', [
+  cta: trigger('cta', [
+    transition('void => cta-click', [
       animate(
         '0.15s',
         keyframes([

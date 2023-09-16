@@ -3,7 +3,7 @@ import { INoteRequest } from 'src/app/notes/item/_models/note-request.model';
 import { INoteResponse } from 'src/app/notes/item/_models/note-response.model';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { updateNote } from 'src/state/notes/note.actions';
+import { noteActions } from 'src/state/notes/note.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +25,7 @@ export class NoteUtilService {
         isPinned: !note?.isPinned,
       };
 
-      this._store.dispatch(updateNote({ note: updatedNote }));
+      this._store.dispatch(noteActions.updateNote({ note: updatedNote }));
     }
   }
 
@@ -43,7 +43,7 @@ export class NoteUtilService {
         isComplete: !note?.isComplete,
       };
 
-      this._store.dispatch(updateNote({ note: updatedNote }));
+      this._store.dispatch(noteActions.updateNote({ note: updatedNote }));
     }
   }
 }

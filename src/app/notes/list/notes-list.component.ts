@@ -5,7 +5,6 @@ import {
   ViewEncapsulation,
   inject
 } from '@angular/core';
-import { archiveNote, loadNotes } from 'src/state/notes/note.actions';
 
 import { Animations } from 'src/app/animations/animations';
 import { AppState } from 'src/state/app.state';
@@ -15,8 +14,8 @@ import { NoteUtilService } from '@services/note-util.service';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { noteActions } from 'src/state/notes/note.actions';
 import { selectAllNotes } from 'src/state/notes/note.selectors';
-import { selectNote } from '../../../state/notes/note.actions';
 import { selectStatus } from '../../../state/notes/note.selectors';
 
 @Component({
@@ -28,7 +27,7 @@ import { selectStatus } from '../../../state/notes/note.selectors';
     Animations.completeIncomplete,
     Animations.delete,
     Animations.selectNote,
-    Animations.addNote,
+    Animations.cta,
   ],
   encapsulation: ViewEncapsulation.None,
 })
@@ -51,13 +50,13 @@ export class NotesListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this._store.dispatch(loadNotes({ searchTerm: '' }));
+    this._store.dispatch(noteActions.loadNotes({ searchTerm: '' }));
   }
 
   searchNotes(input: Event): void {
     const searchTerm = (input?.target as HTMLInputElement)?.value || '';
 
-    this._store.dispatch(loadNotes({ searchTerm }));
+    this._store.dispatch(noteActions.loadNotes({ searchTerm }));
   }
 
   /**
@@ -66,7 +65,7 @@ export class NotesListComponent implements OnInit {
    * @param id - The note id.
    */
   removeNote(id: string): void {
-    this._store.dispatch(archiveNote({ id }));
+    this._store.dispatch(noteActions.archiveNote({ id }));
 
     this._snackBar.open('Note successfully deleted!', 'Success', {
       panelClass: 'status__200',
@@ -80,7 +79,7 @@ export class NotesListComponent implements OnInit {
         isSelected: true,
       };
 
-      this._store.dispatch(selectNote({ note }));
+      this._store.dispatch(noteActions.selectNote({ note }));
     }
   }
 

@@ -69,12 +69,22 @@
 
         <!-- ADD CTA - START -->
         <button matRipple type="button" class="app-notes-list__add" (click)="isAddNoteClicked = true"
-          [@addNote]="isAddNoteClicked ? 'addNote' : 'void'" (@addNote.done)="onAddNoteAnimationEnd()">
-          <mat-icon matRipple class="app-notes-list__item__add__cta" aria-label="New Note">
+          [@cta]="isAddNoteClicked ? 'cta-click' : 'void'" (@cta.done)="onAddNoteAnimationEnd()">
+          <mat-icon matRipple aria-label="New Note">
             add
           </mat-icon>
         </button>
         <!-- ADD CTA - END -->
+
+
+        <!-- SEARCH CTA - START -->
+        <button matRipple type="button" class="app-notes-list__search" (click)="isAddNoteClicked = true"
+          [@cta]="isAddNoteClicked ? 'cta-click' : 'void'">
+          <mat-icon matRipple aria-label="Search Note">
+            search
+          </mat-icon>
+        </button>
+        <!-- SEARCH CTA - END -->
 
       </div>
     </div>

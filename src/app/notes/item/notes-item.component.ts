@@ -7,11 +7,6 @@ import {
   inject
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import {
-  loadNotes,
-  postNote,
-  updateNote
-} from '../../../state/notes/note.actions';
 import { map, of, switchMap } from 'rxjs';
 
 import { Animations } from 'src/app/animations/animations';
@@ -24,6 +19,7 @@ import { NotesItemFormControl } from './_models/note-item-form-control.model';
 import { NotesItemValidation } from './_models/note-item-validation.model';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { Store } from '@ngrx/store';
+import { noteActions } from 'src/state/notes/note.actions';
 import { selectAllNotes } from 'src/state/notes/note.selectors';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -49,7 +45,7 @@ export class NotesItemComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private _snackBar: MatSnackBar,
     private _store: Store<AppState>,
-    private _noteUtilService: NoteUtilService,
+    private _noteUtilService: NoteUtilService
   ) {}
 
   ngOnInit(): void {
@@ -85,7 +81,7 @@ export class NotesItemComponent implements OnInit {
   pinNote(note: INoteResponse): void {
     this._noteUtilService.pinNote(note);
   }
-  
+
   /**
    * Mark a note as complete.
    *
@@ -104,7 +100,7 @@ export class NotesItemComponent implements OnInit {
         }),
         switchMap((id) => {
           if (id) {
-            this._store.dispatch(loadNotes({ searchTerm: '' }));
+            this._store.dispatch(noteActions.loadNotes({ searchTerm: '' }));
 
             return this.allNotes$.pipe(
               switchMap((data) => {
@@ -127,7 +123,7 @@ export class NotesItemComponent implements OnInit {
 
   /**
    * Initialize the form based on the note item passed.
-   * 
+   *
    * @param note - The note item.
    */
   private initForm(note?: INoteResponse | null): void {
@@ -143,7 +139,7 @@ export class NotesItemComponent implements OnInit {
 
     this.form = this._formBuilder?.group(control);
   }
-  
+
   /**
    * Add a new note.
    */
@@ -162,7 +158,7 @@ export class NotesItemComponent implements OnInit {
       isPinned: false,
     };
 
-    this._store.dispatch(postNote({ note: newNote }));
+    this._store.dispatch(noteActions.postNote({ note: newNote }));
 
     this._snackBar.open('Note successfully created!', 'Success', {
       panelClass: 'status__200',
@@ -187,7 +183,7 @@ export class NotesItemComponent implements OnInit {
       isPinned: rawForm?.isPinned,
     };
 
-    this._store.dispatch(updateNote({ note: updatedNote }));
+    this._store.dispatch(noteActions.updateNote({ note: updatedNote }));
 
     this._snackBar.open('Note successfully updated!', 'Success', {
       panelClass: 'status__200',

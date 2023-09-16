@@ -1,22 +1,5 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {
-  archiveNote,
-  archiveNoteFail,
-  archiveNoteSuccess,
-  loadNotes,
-  loadNotesFail,
-  loadNotesSuccess,
-  postNote,
-  postNoteFail,
-  postNoteSuccess,
-  selectNote,
-  selectNoteFail,
-  selectNoteSuccess,
-  updateNote,
-  updateNoteFail,
-  updateNoteSuccess
-} from './note.actions';
-import {
   catchError,
   from,
   map,
@@ -30,6 +13,7 @@ import { AppState } from '../app.state';
 import { Injectable } from '@angular/core';
 import { NoteService } from '@services/note.service';
 import { Store } from '@ngrx/store';
+import { noteActions } from './note.actions';
 import { selectAllNotes } from './note.selectors';
 
 @Injectable()
@@ -44,15 +28,15 @@ export class NoteEffects {
 
   loadNotes$ = createEffect(() =>
     this._actions$.pipe(
-      ofType(loadNotes),
+      ofType(noteActions.loadNotes),
       withLatestFrom(this.allNotes$),
       switchMap(([action, notes]) => {
         if (notes?.length) {
-          return of(loadNotesSuccess({ notes: notes }));
+          return of(noteActions.loadNotesSuccess({ notes: notes }));
         }
         return from(this._noteService.getNotes(action?.searchTerm)).pipe(
-          map((notes) => loadNotesSuccess({ notes: notes })),
-          catchError((error) => of(loadNotesFail({ error })))
+          map((notes) => noteActions.loadNotesSuccess({ notes: notes })),
+          catchError((error) => of(noteActions.loadNotesFail({ error })))
         );
       })
     )
@@ -60,11 +44,11 @@ export class NoteEffects {
 
   updateNote$ = createEffect(() =>
     this._actions$.pipe(
-      ofType(updateNote),
+      ofType(noteActions.updateNote),
       switchMap((noteQuery) =>
         from(this._noteService.putNote(noteQuery?.note)).pipe(
-          map((note) => updateNoteSuccess({ note: note })),
-          catchError((error) => of(updateNoteFail({ error })))
+          map((note) => noteActions.updateNoteSuccess({ note: note })),
+          catchError((error) => of(noteActions.updateNoteFail({ error })))
         )
       )
     )
@@ -72,11 +56,11 @@ export class NoteEffects {
 
   archiveNote$ = createEffect(() =>
     this._actions$.pipe(
-      ofType(archiveNote),
+      ofType(noteActions.archiveNote),
       switchMap((noteQuery) =>
         from(this._noteService.archiveNote(noteQuery?.id)).pipe(
-          map((note) => archiveNoteSuccess({ note: note })),
-          catchError((error) => of(archiveNoteFail({ error })))
+          map((note) => noteActions.archiveNoteSuccess({ note: note })),
+          catchError((error) => of(noteActions.archiveNoteFail({ error })))
         )
       )
     )
@@ -84,11 +68,11 @@ export class NoteEffects {
 
   postNote$ = createEffect(() =>
     this._actions$.pipe(
-      ofType(postNote),
+      ofType(noteActions.postNote),
       switchMap((noteQuery) =>
         from(this._noteService.postNote(noteQuery?.note)).pipe(
-          map((note) => postNoteSuccess({ note: note })),
-          catchError((error) => of(postNoteFail({ error })))
+          map((note) => noteActions.postNoteSuccess({ note: note })),
+          catchError((error) => of(noteActions.postNoteFail({ error })))
         )
       )
     )
@@ -96,10 +80,10 @@ export class NoteEffects {
 
   selectNote$ = createEffect(() =>
     this._actions$.pipe(
-      ofType(selectNote),
+      ofType(noteActions.selectNote),
       pipe(
-        map((note) => selectNoteSuccess({ note: note?.note })),
-        catchError((error) => of(selectNoteFail({ error })))
+        map((note) => noteActions.selectNoteSuccess({ note: note?.note })),
+        catchError((error) => of(noteActions.selectNoteFail({ error })))
       )
       // switchMap((note) =>
       //   from(of(note.note)).pipe(
