@@ -37,7 +37,6 @@ router.route("/list").get((req, res, next) => {
       if (error) {
         return next(error);
       } else {
-        data.
         res.json({ data: data });
       }
     }).sort({ dateModified: -1 });
