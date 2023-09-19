@@ -17,7 +17,6 @@ export const noteReducer = createReducer(
   // GET NOTES
   on(noteActions.loadNotes, (state) => ({ ...state, status: 'loading' })),
   on(noteActions.loadNotesSuccess, (state, { notes }) => {
-    debugger;
     state = {
       ...state,
       notes: notes,
@@ -46,13 +45,15 @@ export const noteReducer = createReducer(
   // UPDATE NOTE
   on(noteActions.updateNote, (state) => ({ ...state, status: 'loading' })),
   on(noteActions.updateNoteSuccess, (state, { note }) => {
+    debugger;
     const updatedNotes = state.notes.map((item) => {
       if (item?._id === note?._id) {
-        item = { ...note };
+        item = { ...item, ...note };
         return item;
       }
       return item;
     });
+
 
     return {
       ...state,
@@ -111,34 +112,4 @@ export const noteReducer = createReducer(
     error: error,
     status: 'error',
   })),
-
-  // SELECT NOTE
-  on(noteActions.selectNote, (state) => ({ ...state, status: 'loading' })),
-  on(noteActions.selectNoteSuccess, (state, { note }) => {
-    const updatedNotes = state.notes.map((item) => {
-      if (item?._id === note?._id) {
-        item = {
-          ...item,
-          ...note,
-        };
-      } else {
-        item = {
-          ...item,
-        };
-      }
-      return item;
-    });
-
-    return {
-      ...state,
-      notes: updatedNotes,
-      error: null,
-      status: 'success',
-    };
-  }),
-  on(noteActions.selectNoteFail, (state, { error }) => ({
-    ...state,
-    error: error,
-    status: 'error',
-  }))
 );

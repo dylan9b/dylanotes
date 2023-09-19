@@ -1,6 +1,5 @@
 import { createActionGroup, props } from '@ngrx/store';
 
-import { INoteRequest } from 'src/app/notes/item/_models/note-request.model';
 import { INoteResponse } from 'src/app/notes/item/_models/note-response.model';
 
 export const noteActions = createActionGroup({
@@ -12,7 +11,7 @@ export const noteActions = createActionGroup({
     'Load Notes Fail': props<{ error: string }>(),
 
     // UPDATE NOTE
-    'Update Note': props<{ note: INoteRequest }>(),
+    'Update Note': props<{ note: INoteResponse }>(),
     'Update Note Success': props<{ note: INoteResponse }>(),
     'Update Note Fail': props<{ error: string }>(),
 

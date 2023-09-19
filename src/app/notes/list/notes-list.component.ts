@@ -79,7 +79,7 @@ export class NotesListComponent implements OnInit {
         isSelected: true,
       };
 
-      this._store.dispatch(noteActions.selectNote({ note }));
+      this._store.dispatch(noteActions.updateNote({ note: note }));
     }
   }
 

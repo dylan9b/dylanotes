@@ -7,7 +7,7 @@ import {
   inject
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { map, of, switchMap } from 'rxjs';
+import { Observable, map, of, switchMap } from 'rxjs';
 
 import { Animations } from 'src/app/animations/animations';
 import { AppState } from '../../../state/app.state';
@@ -21,6 +21,7 @@ import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { Store } from '@ngrx/store';
 import { noteActions } from 'src/state/notes/note.actions';
 import { selectAllNotes } from 'src/state/notes/note.selectors';
+import { selectNote } from '../../../state/notes/note.selectors';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -37,6 +38,7 @@ export class NotesItemComponent implements OnInit {
   note!: INoteResponse;
 
   allNotes$ = this._store.select(selectAllNotes);
+  note$!: Observable<INoteResponse | null>;
   destroyRef = inject(DestroyRef);
 
   constructor(
@@ -100,13 +102,8 @@ export class NotesItemComponent implements OnInit {
         }),
         switchMap((id) => {
           if (id) {
-            this._store.dispatch(noteActions.loadNotes({ searchTerm: '' }));
-
-            return this.allNotes$.pipe(
-              switchMap((data) => {
-                return of(data.find((d) => d._id === id));
-              })
-            );
+            this.note$ = this._store.select(selectNote(id));
+            return this.note$;
           }
 
           return of(null);

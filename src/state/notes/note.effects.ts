@@ -4,7 +4,6 @@ import {
   from,
   map,
   of,
-  pipe,
   switchMap,
   withLatestFrom
 } from 'rxjs';
@@ -32,6 +31,9 @@ export class NoteEffects {
       withLatestFrom(this.allNotes$),
       switchMap(([action, notes]) => {
         if (notes?.length) {
+          notes = notes.map((note) => {
+            return { ...note, isSelected: false };
+          });
           return of(noteActions.loadNotesSuccess({ notes: notes }));
         }
         return from(this._noteService.getNotes(action?.searchTerm)).pipe(
@@ -47,7 +49,11 @@ export class NoteEffects {
       ofType(noteActions.updateNote),
       switchMap((noteQuery) =>
         from(this._noteService.putNote(noteQuery?.note)).pipe(
-          map((note) => noteActions.updateNoteSuccess({ note: note })),
+          map((note) =>
+            noteActions.updateNoteSuccess({
+              note: { ...note, ...noteQuery?.note },
+            })
+          ),
           catchError((error) => of(noteActions.updateNoteFail({ error })))
         )
       )
@@ -75,22 +81,6 @@ export class NoteEffects {
           catchError((error) => of(noteActions.postNoteFail({ error })))
         )
       )
-    )
-  );
-
-  selectNote$ = createEffect(() =>
-    this._actions$.pipe(
-      ofType(noteActions.selectNote),
-      pipe(
-        map((note) => noteActions.selectNoteSuccess({ note: note?.note })),
-        catchError((error) => of(noteActions.selectNoteFail({ error })))
-      )
-      // switchMap((note) =>
-      //   from(of(note.note)).pipe(
-      //     map((note) => postNoteSuccess({ note: note })),
-      //     catchError((error) => of(postNoteFail({ error })))
-      //   )
-      // )
     )
   );
 }
