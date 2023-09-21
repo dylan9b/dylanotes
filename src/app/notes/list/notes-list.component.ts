@@ -56,6 +56,11 @@ export class NotesListComponent implements OnInit {
     this._store.dispatch(noteActions.loadNotes({ searchTerm: '' }));
   }
 
+  /**
+   * Retrieves the list of notes based on a search term.
+   * 
+   * @param input - The search term.
+   */
   searchNotes(input: Event): void {
     const searchTerm = (input?.target as HTMLInputElement)?.value || '';
 
@@ -75,6 +80,12 @@ export class NotesListComponent implements OnInit {
     });
   }
 
+  /**
+   * On clicking a note, updated its 'isSelected' property.
+   * 
+   * @param note - The clicked note.
+   * @param status - The note state.
+   */
   onNoteItemClick(note: INoteResponse, status: string): void {
     if (status !== 'loading') {
       note = {
@@ -86,6 +97,11 @@ export class NotesListComponent implements OnInit {
     }
   }
 
+  /**
+   * On ending the animation, redirect the user to the note item page.
+   * 
+   * @param note - The selected note.
+   */
   onSelectNoteAnimationEnd(note: INoteResponse): void {
     if (note?.isSelected) {
       this._router.navigate(['/notes', note?._id]);

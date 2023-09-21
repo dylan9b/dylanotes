@@ -92,6 +92,9 @@ export class NotesItemComponent implements OnInit {
     this._noteUtilService.completeNote(note);
   }
 
+  /**
+   * Initialize the note.
+   */
   private subscribeRouteParams(): void {
     this._route.params
       .pipe(
