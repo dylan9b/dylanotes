@@ -7,5 +7,4 @@ export interface INoteRequest {
   isComplete: boolean;
   isPinned: boolean;
   isArchived: boolean;
-  isSelected: boolean;
 }

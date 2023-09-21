@@ -1,12 +1,11 @@
 import { createReducer, on } from '@ngrx/store';
 
+import { INoteResponse } from 'src/app/notes/item/_models/note-response.model';
 import { NoteState } from './notes.state';
-import {
-  noteActions
-} from './note.actions';
+import { noteActions } from './note.actions';
 
 export const initialState: NoteState = {
-  notes: [],
+  notes: {},
   error: null,
   status: 'pending',
 };
@@ -17,17 +16,18 @@ export const noteReducer = createReducer(
   // GET NOTES
   on(noteActions.loadNotes, (state) => ({ ...state, status: 'loading' })),
   on(noteActions.loadNotesSuccess, (state, { notes }) => {
-    state = {
-      ...state,
-      notes: notes,
-    };
+    let updatedNotes = { ...state.notes };
 
-    const updatedNotes = state.notes.map((item) => {
-      return {
-        ...item,
+    for (let item of Object.keys(notes)) {
+      let updatedItem = Object.assign({}, notes[item], {
         isSelected: false,
+      });
+
+      updatedNotes = {
+        ...updatedNotes,
+        [updatedItem._id]: { ...updatedItem },
       };
-    });
+    }
 
     return {
       ...state,
@@ -45,15 +45,13 @@ export const noteReducer = createReducer(
   // UPDATE NOTE
   on(noteActions.updateNote, (state) => ({ ...state, status: 'loading' })),
   on(noteActions.updateNoteSuccess, (state, { note }) => {
-    debugger;
-    const updatedNotes = state.notes.map((item) => {
-      if (item?._id === note?._id) {
-        item = { ...item, ...note };
-        return item;
-      }
-      return item;
-    });
-
+    const updatedNotes = {
+      ...state.notes,
+      [note._id]: {
+        ...state.notes[note._id],
+        ...note,
+      },
+    };
 
     return {
       ...state,
@@ -76,13 +74,13 @@ export const noteReducer = createReducer(
       isArchived: true,
     };
 
-    const updatedNotes = state.notes.map((item) => {
-      if (item?._id === note?._id) {
-        item = { ...item, isArchived: true };
-        return item;
-      }
-      return item;
-    });
+    const updatedNotes = {
+      ...state.notes,
+      [note._id]: {
+        ...state.notes[note._id],
+        isArchived: true,
+      },
+    };
 
     return {
       ...state,
@@ -100,9 +98,21 @@ export const noteReducer = createReducer(
   // POST NOTE
   on(noteActions.postNote, (state) => ({ ...state, status: 'loading' })),
   on(noteActions.postNoteSuccess, (state, { note }) => {
+    let newNote: Record<string, INoteResponse> = {};
+    newNote = {
+      [note._id]: {
+        ...note,
+      }
+    };
+
+    const updatedNotes = {
+      ...newNote,
+      ...state.notes,
+    };
+
     return {
       ...state,
-      notes: [note, ...state.notes],
+      notes: updatedNotes,
       error: null,
       status: 'success',
     };
@@ -111,5 +121,5 @@ export const noteReducer = createReducer(
     ...state,
     error: error,
     status: 'error',
-  })),
+  }))
 );

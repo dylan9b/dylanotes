@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable, map, of, switchMap } from 'rxjs';
+import { selectAllNotes, selectNote } from 'src/state/notes/note.selectors';
 
 import { Animations } from 'src/app/animations/animations';
 import { AppState } from '../../../state/app.state';
@@ -20,8 +21,6 @@ import { NotesItemValidation } from './_models/note-item-validation.model';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { Store } from '@ngrx/store';
 import { noteActions } from 'src/state/notes/note.actions';
-import { selectAllNotes } from 'src/state/notes/note.selectors';
-import { selectNote } from '../../../state/notes/note.selectors';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -103,10 +102,25 @@ export class NotesItemComponent implements OnInit {
         switchMap((id) => {
           if (id) {
             this.note$ = this._store.select(selectNote(id));
-            return this.note$;
+            return this.note$.pipe(
+              map((note) => {
+                return { note, id };
+              })
+            );
           }
 
-          return of(null);
+          return of({ note: null, id });
+        }),
+        switchMap((data) => {
+          const { note, id } = data;
+          if (note) {
+            return of(note);
+          } else {
+            this._store.dispatch(noteActions.loadNotes({ searchTerm: '' }));
+            this.note$ = this._store.select(selectNote(id));
+
+            return this.note$;
+          }
         })
       )
       .pipe(takeUntilDestroyed(this.destroyRef))

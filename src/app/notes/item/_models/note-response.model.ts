@@ -7,5 +7,6 @@ export interface INoteResponse {
   isComplete: boolean;
   isPinned: boolean;
   isArchived: boolean;
-  isSelected: boolean;
+  
+  isSelected?: boolean;
 }

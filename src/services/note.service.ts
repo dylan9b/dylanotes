@@ -20,18 +20,24 @@ export class NoteService {
    * Retrieves the notes based on the search term provided.
    *
    * @param searchTerm - The search term.
-   * @returns { Observable<INoteResponse[]> } - An observable array of note item responses.
+   * @returns { Observable<{ Record<string, INoteResponse> }> } - An observable array of note item responses.
    */
-  getNotes(searchTerm?: string | null): Observable<INoteResponse[]> {
+  getNotes(
+    searchTerm?: string | null
+  ): Observable<Record<string, INoteResponse>> {
     return this._http
-      .get<{ data: INoteResponse[] }>(`${this.baseUrl}/notes/list`, {
-        params: { searchTerm: searchTerm as string },
-      })
+      .get<{ data: Record<string, INoteResponse> }>(
+        `${this.baseUrl}/notes/list`,
+        {
+          params: { searchTerm: searchTerm as string },
+        }
+      )
       .pipe(
         map((response) => {
           return response?.data;
         }),
         catchError((error) => {
+          debugger;
           throw error;
         })
       );

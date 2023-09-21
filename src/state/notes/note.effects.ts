@@ -1,12 +1,5 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import {
-  catchError,
-  from,
-  map,
-  of,
-  switchMap,
-  withLatestFrom
-} from 'rxjs';
+import { catchError, from, map, of, switchMap, withLatestFrom } from 'rxjs';
 
 import { AppState } from '../app.state';
 import { Injectable } from '@angular/core';
@@ -30,10 +23,8 @@ export class NoteEffects {
       ofType(noteActions.loadNotes),
       withLatestFrom(this.allNotes$),
       switchMap(([action, notes]) => {
-        if (notes?.length) {
-          notes = notes.map((note) => {
-            return { ...note, isSelected: false };
-          });
+        debugger;
+        if (Object.entries(notes).length > 0) {
           return of(noteActions.loadNotesSuccess({ notes: notes }));
         }
         return from(this._noteService.getNotes(action?.searchTerm)).pipe(

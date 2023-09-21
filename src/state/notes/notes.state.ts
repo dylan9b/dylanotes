@@ -1,7 +1,7 @@
-import { INoteResponse } from '../../app/notes/item/_models/note-response.model';
+import { INoteResponse } from 'src/app/notes/item/_models/note-response.model';
 
 export interface NoteState {
-  notes: INoteResponse[];
+  notes: Record<string, INoteResponse>;
   error: string | null;
   status: 'pending' | 'loading' | 'error' | 'success';
 }

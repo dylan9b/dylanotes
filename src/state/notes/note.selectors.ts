@@ -11,7 +11,7 @@ export const selectAllNotes = createSelector(
 
 export const selectNote = (id: string) =>
   createSelector(selectNotesState, (state: NoteState) => {
-    return state?.notes?.find((note) => note?._id === id) || null;
+    return state?.notes[id];
   });
 
 export const selectStatus = createSelector(

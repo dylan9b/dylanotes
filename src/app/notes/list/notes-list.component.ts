@@ -14,6 +14,7 @@ import { NoteUtilService } from '@services/note-util.service';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { map } from 'rxjs';
 import { noteActions } from 'src/state/notes/note.actions';
 import { selectAllNotes } from 'src/state/notes/note.selectors';
 import { selectStatus } from '../../../state/notes/note.selectors';
@@ -32,7 +33,9 @@ import { selectStatus } from '../../../state/notes/note.selectors';
   encapsulation: ViewEncapsulation.None,
 })
 export class NotesListComponent implements OnInit {
-  allNotes$ = this._store.select(selectAllNotes);
+  allNotes$ = this._store
+    .select(selectAllNotes)
+    .pipe(map((data) => Object.values(data)));
   status$ = this._store.select(selectStatus);
 
   noteSteps = NotesStep;
