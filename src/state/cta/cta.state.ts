@@ -1,8 +1,17 @@
 export interface CTAState {
-  cta: CTAResponse;
+  action: string;
 }
 
-export interface CTAResponse {
-  status: 'pending' | 'loading' | 'error' | 'success';
-  action: 'back' | 'search' | 'add' | null;
+export const CTA_ACTION_STATES = {
+  ADD: 'add',
+  SEARCH: 'search',
+  BACK: 'back',
+  PENDING: 'pending',
+}
+
+export const STATUS = {
+  PENDING: 'pending',
+  LOADING: 'loading',
+  SUCCESS: 'success',
+  ERROR: 'error',
 }

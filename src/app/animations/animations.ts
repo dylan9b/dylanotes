@@ -1,6 +1,8 @@
 import {
   animate,
   keyframes,
+  query,
+  stagger,
   state,
   style,
   transition,
@@ -109,6 +111,16 @@ export const Animations = {
             filter: 'brightness(1)',
           }),
         ])
+      ),
+    ]),
+  ]),
+
+
+  listAnimation: trigger('listAnimation', [
+    transition('* <=> *', [
+      query(':enter',
+        [style({ opacity: 0 }), stagger(250, animate(250, style({ opacity: 1 })))],
+        { optional: true }
       ),
     ]),
   ]),

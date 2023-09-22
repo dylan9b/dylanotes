@@ -17,6 +17,7 @@ import { NoteUtilService } from '@services/note-util.service';
 import { Animations } from 'src/app/animations/animations';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { ctaActions } from 'src/state/cta/cta.actions';
+import { CTA_ACTION_STATES } from 'src/state/cta/cta.state';
 import { noteActions } from 'src/state/notes/note.actions';
 import { selectNote } from 'src/state/notes/note.selectors';
 import { AppState } from '../../../state/app.state';
@@ -56,7 +57,7 @@ export class NotesItemComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._store.dispatch(
-      ctaActions.updateCTA({ cta: { action: null, status: 'pending' } })
+      ctaActions.updateCTA({ action: CTA_ACTION_STATES.PENDING })
     );
   }
 

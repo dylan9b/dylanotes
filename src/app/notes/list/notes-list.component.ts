@@ -16,7 +16,7 @@ import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { AppState } from 'src/state/app.state';
 import { ctaActions } from 'src/state/cta/cta.actions';
 import { selectCta } from 'src/state/cta/cta.selectors';
-import { CTAResponse } from 'src/state/cta/cta.state';
+import { CTA_ACTION_STATES } from 'src/state/cta/cta.state';
 import { noteActions } from 'src/state/notes/note.actions';
 import { selectAllNotes } from 'src/state/notes/note.selectors';
 import { selectStatus } from '../../../state/notes/note.selectors';
@@ -32,6 +32,7 @@ import { INoteResponse } from '../item/_models/note-response.model';
     Animations.delete,
     Animations.selectNote,
     Animations.cta,
+    Animations.listAnimation,
   ],
   encapsulation: ViewEncapsulation.None,
 })
@@ -39,6 +40,8 @@ export class NotesListComponent implements OnInit {
   allNotes$ = this._store
     .select(selectAllNotes)
     .pipe(map((data) => Object.values(data)));
+
+  notes!: INoteResponse[];
   status$ = this._store.select(selectStatus);
   cta$ = this._store.select(selectCta);
 
@@ -61,6 +64,8 @@ export class NotesListComponent implements OnInit {
       noteActions.loadNotes({ searchTerm: '', isFiltered: false })
     );
     this._store.dispatch(ctaActions.loadCTA());
+
+    this.allNotes$.subscribe((x) => (this.notes = x));
   }
 
   /**
@@ -117,22 +122,17 @@ export class NotesListComponent implements OnInit {
   }
 
   onSearchNote(): void {
-    let cta = {} as CTAResponse;
-    cta = { ...cta, action: 'search' };
-
-    this._store.dispatch(ctaActions.updateCTA({ cta }));
+    this._store.dispatch(ctaActions.updateCTA({ action: CTA_ACTION_STATES.SEARCH }));
   }
 
   onAddNote(): void {
     this.isAddNoteClicked = true;
-    let cta = {} as CTAResponse;
-    cta = { ...cta, action: 'add' };
 
-    this._store.dispatch(ctaActions.updateCTA({ cta }));
+    this._store.dispatch(ctaActions.updateCTA({ action: CTA_ACTION_STATES.ADD }));
   }
 
-  onAddNoteAnimationEnd(cta: CTAResponse): void {
-    if (cta.action === 'add') {
+  onAddNoteAnimationEnd(action: string): void {
+    if (action === 'add') {
       this._router.navigate(['/notes', 'new']);
       this.isAddNoteClicked = !this.isAddNoteClicked;
     }

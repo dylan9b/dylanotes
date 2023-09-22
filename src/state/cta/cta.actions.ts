@@ -1,18 +1,16 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
 
-import { CTAResponse } from './cta.state';
-
 export const ctaActions = createActionGroup({
   source: 'CTA',
   events: {
     // GET CTA
     'Load CTA': emptyProps(),
-    'Load CTA Success': props<{ cta: CTAResponse }>(),
+    'Load CTA Success': props<{ action: string}>(),
     'Load CTA Fail': props<{ error: string }>(),
 
     // UPDATE CTA
-    'Update CTA': props<{ cta: CTAResponse }>(),
-    'Update CTA Success': props<{ cta: CTAResponse }>(),
+    'Update CTA': props<{ action: string }>(),
+    'Update CTA Success': props<{ action: string }>(),
     'Update CTA Fail': props<{ error: string }>(),
 
     // ARCHIVE NOTE

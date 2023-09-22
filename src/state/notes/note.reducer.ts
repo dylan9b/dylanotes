@@ -1,13 +1,14 @@
 import { createReducer, on } from '@ngrx/store';
 
 import { INoteResponse } from 'src/app/notes/item/_models/note-response.model';
+import { STATUS } from '../cta/cta.state';
 import { noteActions } from './note.actions';
 import { NoteState } from './notes.state';
 
 export const initialState: NoteState = {
   notes: {},
   error: null,
-  status: 'pending',
+  status: STATUS.ERROR,
   isFiltered: false,
 };
 
@@ -17,7 +18,7 @@ export const noteReducer = createReducer(
   // GET NOTES
   on(noteActions.loadNotes, (state) => ({
     ...state,
-    status: 'loading',
+    status: STATUS.LOADING,
     isFiltered: state.isFiltered,
   })),
   on(noteActions.loadNotesSuccess, (state, { notes, isFiltered }) => {
@@ -39,17 +40,17 @@ export const noteReducer = createReducer(
       notes: updatedNotes,
       isFiltered,
       error: null,
-      status: 'success',
+      status: STATUS.SUCCESS,
     };
   }),
   on(noteActions.loadNotesFail, (state, { error }) => ({
     ...state,
     error: error,
-    status: 'error',
+    status: STATUS.ERROR,
   })),
 
   // UPDATE NOTE
-  on(noteActions.updateNote, (state) => ({ ...state, status: 'loading' })),
+  on(noteActions.updateNote, (state) => ({ ...state,     status: STATUS.LOADING  })),
   on(noteActions.updateNoteSuccess, (state, { note }) => {
     const updatedNotes = {
       ...state.notes,
@@ -63,17 +64,17 @@ export const noteReducer = createReducer(
       ...state,
       notes: updatedNotes,
       error: null,
-      status: 'success',
+      status: STATUS.SUCCESS,
     };
   }),
   on(noteActions.updateNoteFail, (state, { error }) => ({
     ...state,
     error: error,
-    status: 'error',
+    status: STATUS.ERROR,
   })),
 
   // ARCHIVE NOTE
-  on(noteActions.archiveNote, (state) => ({ ...state, status: 'loading' })),
+  on(noteActions.archiveNote, (state) => ({ ...state, status: STATUS.LOADING })),
   on(noteActions.archiveNoteSuccess, (state, { note }) => {
     note = {
       ...note,
@@ -92,17 +93,17 @@ export const noteReducer = createReducer(
       ...state,
       notes: updatedNotes,
       error: null,
-      status: 'success',
+      status: STATUS.SUCCESS,
     };
   }),
   on(noteActions.archiveNoteFail, (state, { error }) => ({
     ...state,
     error: error,
-    status: 'error',
+    status: STATUS.ERROR,
   })),
 
   // POST NOTE
-  on(noteActions.postNote, (state) => ({ ...state, status: 'loading' })),
+  on(noteActions.postNote, (state) => ({ ...state, status: STATUS.LOADING })),
   on(noteActions.postNoteSuccess, (state, { note }) => {
     let newNote: Record<string, INoteResponse> = {};
     newNote = {
@@ -120,17 +121,17 @@ export const noteReducer = createReducer(
       ...state,
       notes: updatedNotes,
       error: null,
-      status: 'success',
+      status: STATUS.SUCCESS,
     };
   }),
   on(noteActions.postNoteFail, (state, { error }) => ({
     ...state,
     error: error,
-    status: 'error',
+    status: STATUS.ERROR,
   })),
 
   // SELECT NOTE
-  on(noteActions.selectNote, (state) => ({ ...state, status: 'loading' })),
+  on(noteActions.selectNote, (state) => ({ ...state, status: STATUS.LOADING })),
   on(noteActions.selectNoteSuccess, (state, { note }) => {
     const updatedNotes = {
       ...state.notes,
@@ -144,12 +145,12 @@ export const noteReducer = createReducer(
       ...state,
       notes: updatedNotes,
       error: null,
-      status: 'success',
+      status: STATUS.SUCCESS,
     };
   }),
   on(noteActions.selectNoteFail, (state, { error }) => ({
     ...state,
     error: error,
-    status: 'error',
+    status: STATUS.ERROR,
   }))
 );

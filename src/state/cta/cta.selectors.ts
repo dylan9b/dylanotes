@@ -6,5 +6,5 @@ export const selectCtaState = (state: AppState) => state?.cta;
 
 export const selectCta = createSelector(
   selectCtaState,
-  (state: CTAState) => state?.cta
+  (state: CTAState) => state.action
 );

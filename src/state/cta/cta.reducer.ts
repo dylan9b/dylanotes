@@ -1,13 +1,10 @@
 import { createReducer, on } from '@ngrx/store';
+import { CTAState, CTA_ACTION_STATES, STATUS } from './cta.state';
 
 import { ctaActions } from './cta.actions';
-import { CTAState } from './cta.state';
 
 export const initialState: CTAState = {
-  cta: {
-    status: 'pending',
-    action: null,
-  },
+  action: CTA_ACTION_STATES.PENDING,
 };
 
 export const ctaReducer = createReducer(
@@ -16,37 +13,40 @@ export const ctaReducer = createReducer(
   // GET CTA
   on(ctaActions.loadCTA, (state) => ({
     ...state,
-    status: 'loading',
+    status: STATUS.LOADING,
   })),
   on(ctaActions.loadCTASuccess, (state) => {
+    debugger;
+
     return {
       ...state,
+      action: state.action,
       error: null,
-      status: 'success',
+      status: STATUS.SUCCESS,
     };
   }),
   on(ctaActions.loadCTAFail, (state, { error }) => ({
     ...state,
     error: error,
-    status: 'error',
+    status: STATUS.ERROR,
   })),
 
   // UPDATE CTA
   on(ctaActions.updateCTA, (state) => ({
     ...state,
-    status: 'loading',
+    status: STATUS.LOADING,
   })),
-  on(ctaActions.updateCTASuccess, (state, { cta }) => {
+  on(ctaActions.updateCTASuccess, (state, { action }) => {
     return {
       ...state,
-      cta: { ...state.cta, ... cta },
+      action: action,
       error: null,
-      status: 'success',
+      status: STATUS.SUCCESS,
     };
   }),
   on(ctaActions.updateCTAFail, (state, { error }) => ({
     ...state,
     error: error,
-    status: 'error',
+    status: STATUS.ERROR,
   }))
 );
