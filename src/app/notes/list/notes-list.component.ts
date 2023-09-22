@@ -6,18 +6,18 @@ import {
   inject
 } from '@angular/core';
 
-import { Animations } from 'src/app/animations/animations';
-import { AppState } from 'src/state/app.state';
-import { INoteResponse } from '../item/_models/note-response.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { NoteUtilService } from '@services/note-util.service';
-import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { NoteUtilService } from '@services/note-util.service';
 import { map } from 'rxjs';
+import { Animations } from 'src/app/animations/animations';
+import { NotesStep } from 'src/app/header/_models/header-input.model';
+import { AppState } from 'src/state/app.state';
 import { noteActions } from 'src/state/notes/note.actions';
 import { selectAllNotes } from 'src/state/notes/note.selectors';
 import { selectStatus } from '../../../state/notes/note.selectors';
+import { INoteResponse } from '../item/_models/note-response.model';
 
 @Component({
   selector: 'app-notes-list',
@@ -53,7 +53,7 @@ export class NotesListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this._store.dispatch(noteActions.loadNotes({ searchTerm: '' }));
+    this._store.dispatch(noteActions.loadNotes({ searchTerm: '', isFiltered: false }));
   }
 
   /**
@@ -63,8 +63,7 @@ export class NotesListComponent implements OnInit {
    */
   searchNotes(input: Event): void {
     const searchTerm = (input?.target as HTMLInputElement)?.value || '';
-
-    this._store.dispatch(noteActions.loadNotes({ searchTerm }));
+    this._store.dispatch(noteActions.loadNotes({ searchTerm, isFiltered: true }));
   }
 
   /**
@@ -93,7 +92,7 @@ export class NotesListComponent implements OnInit {
         isSelected: true,
       };
 
-      this._store.dispatch(noteActions.updateNote({ note: note }));
+      this._store.dispatch(noteActions.selectNote({ note: note }));
     }
   }
 

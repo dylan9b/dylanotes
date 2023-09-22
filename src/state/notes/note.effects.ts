@@ -1,12 +1,12 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, from, map, of, switchMap, withLatestFrom } from 'rxjs';
-
-import { AppState } from '../app.state';
-import { Injectable } from '@angular/core';
-import { NoteService } from '@services/note.service';
-import { Store } from '@ngrx/store';
-import { noteActions } from './note.actions';
+import { catchError, from, map, of, pipe, switchMap, withLatestFrom } from 'rxjs';
 import { selectAllNotes } from './note.selectors';
+
+import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { NoteService } from '@services/note.service';
+import { AppState } from '../app.state';
+import { noteActions } from './note.actions';
 
 @Injectable()
 export class NoteEffects {
@@ -23,12 +23,13 @@ export class NoteEffects {
       ofType(noteActions.loadNotes),
       withLatestFrom(this.allNotes$),
       switchMap(([action, notes]) => {
-        debugger;
-        if (Object.entries(notes).length > 0) {
-          return of(noteActions.loadNotesSuccess({ notes: notes }));
+        if (!action?.isFiltered) {
+          if (Object.entries(notes).length > 0) {
+            return of(noteActions.loadNotesSuccess({ notes: notes, isFiltered: action.isFiltered }));
+          }
         }
         return from(this._noteService.getNotes(action?.searchTerm)).pipe(
-          map((notes) => noteActions.loadNotesSuccess({ notes: notes })),
+          map((notes) => noteActions.loadNotesSuccess({ notes: notes, isFiltered: action.isFiltered })),
           catchError((error) => of(noteActions.loadNotesFail({ error })))
         );
       })
@@ -71,6 +72,16 @@ export class NoteEffects {
           map((note) => noteActions.postNoteSuccess({ note: note })),
           catchError((error) => of(noteActions.postNoteFail({ error })))
         )
+      )
+    )
+  );
+
+  selectNote$ = createEffect(() =>
+    this._actions$.pipe(
+      ofType(noteActions.selectNote),
+      pipe(
+        map((note) => noteActions.selectNoteSuccess({ note: note?.note })),
+        catchError((error) => of(noteActions.selectNoteFail({ error })))
       )
     )
   );

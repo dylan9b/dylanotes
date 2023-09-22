@@ -4,4 +4,5 @@ export interface NoteState {
   notes: Record<string, INoteResponse>;
   error: string | null;
   status: 'pending' | 'loading' | 'error' | 'success';
+  isFiltered: boolean;
 }

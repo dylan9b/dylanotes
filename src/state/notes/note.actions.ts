@@ -6,8 +6,8 @@ export const noteActions = createActionGroup({
   source: '[NOTES]',
   events: {
     // GET NOTES
-    'Load Notes': props<{ searchTerm: string }>(),
-    'Load Notes Success': props<{ notes: Record<string, INoteResponse> }>(),
+    'Load Notes': props<{ searchTerm: string, isFiltered: boolean }>(),
+    'Load Notes Success': props<{ notes: Record<string, INoteResponse>, isFiltered: boolean }>(),
     'Load Notes Fail': props<{ error: string }>(),
 
     // UPDATE NOTE

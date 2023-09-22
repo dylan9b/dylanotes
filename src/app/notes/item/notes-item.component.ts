@@ -1,27 +1,27 @@
-import { ActivatedRoute, Router } from '@angular/router';
 import {
   Component,
   DestroyRef,
   OnInit,
   ViewEncapsulation,
-  inject
+  inject,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, map, of, switchMap } from 'rxjs';
-import { selectAllNotes, selectNote } from 'src/state/notes/note.selectors';
 
-import { Animations } from 'src/app/animations/animations';
-import { AppState } from '../../../state/app.state';
-import { INoteRequest } from './_models/note-request.model';
-import { INoteResponse } from './_models/note-response.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Store } from '@ngrx/store';
 import { NoteUtilService } from '@services/note-util.service';
+import { Animations } from 'src/app/animations/animations';
+import { NotesStep } from 'src/app/header/_models/header-input.model';
+import { noteActions } from 'src/state/notes/note.actions';
+import { selectNote } from 'src/state/notes/note.selectors';
+import { AppState } from '../../../state/app.state';
 import { NotesItemFormControl } from './_models/note-item-form-control.model';
 import { NotesItemValidation } from './_models/note-item-validation.model';
-import { NotesStep } from 'src/app/header/_models/header-input.model';
-import { Store } from '@ngrx/store';
-import { noteActions } from 'src/state/notes/note.actions';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { INoteRequest } from './_models/note-request.model';
+import { INoteResponse } from './_models/note-response.model';
 
 @Component({
   selector: 'app-notes-item',
@@ -36,7 +36,6 @@ export class NotesItemComponent implements OnInit {
   noteSteps = NotesStep;
   note!: INoteResponse;
 
-  allNotes$ = this._store.select(selectAllNotes);
   note$!: Observable<INoteResponse | null>;
   destroyRef = inject(DestroyRef);
 
@@ -119,12 +118,14 @@ export class NotesItemComponent implements OnInit {
           if (note) {
             return of(note);
           } else {
-            this._store.dispatch(noteActions.loadNotes({ searchTerm: '' }));
+            this._store.dispatch(
+              noteActions.loadNotes({ searchTerm: '', isFiltered: false })
+            );
             this.note$ = this._store.select(selectNote(id));
 
             return this.note$;
           }
-        })
+        }),
       )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((note) => {

@@ -1,22 +1,27 @@
 import { createReducer, on } from '@ngrx/store';
 
 import { INoteResponse } from 'src/app/notes/item/_models/note-response.model';
-import { NoteState } from './notes.state';
 import { noteActions } from './note.actions';
+import { NoteState } from './notes.state';
 
 export const initialState: NoteState = {
   notes: {},
   error: null,
   status: 'pending',
+  isFiltered: false,
 };
 
 export const noteReducer = createReducer(
   initialState,
 
   // GET NOTES
-  on(noteActions.loadNotes, (state) => ({ ...state, status: 'loading' })),
-  on(noteActions.loadNotesSuccess, (state, { notes }) => {
-    let updatedNotes = { ...state.notes };
+  on(noteActions.loadNotes, (state) => ({
+    ...state,
+    status: 'loading',
+    isFiltered: state.isFiltered,
+  })),
+  on(noteActions.loadNotesSuccess, (state, { notes, isFiltered }) => {
+    let updatedNotes = {};
 
     for (let item of Object.keys(notes)) {
       let updatedItem = Object.assign({}, notes[item], {
@@ -32,6 +37,7 @@ export const noteReducer = createReducer(
     return {
       ...state,
       notes: updatedNotes,
+      isFiltered,
       error: null,
       status: 'success',
     };
@@ -102,7 +108,7 @@ export const noteReducer = createReducer(
     newNote = {
       [note._id]: {
         ...note,
-      }
+      },
     };
 
     const updatedNotes = {
@@ -118,6 +124,30 @@ export const noteReducer = createReducer(
     };
   }),
   on(noteActions.postNoteFail, (state, { error }) => ({
+    ...state,
+    error: error,
+    status: 'error',
+  })),
+
+  // SELECT NOTE
+  on(noteActions.selectNote, (state) => ({ ...state, status: 'loading' })),
+  on(noteActions.selectNoteSuccess, (state, { note }) => {
+    const updatedNotes = {
+      ...state.notes,
+      [note._id]: {
+        ...state.notes[note._id],
+        isSelected: true,
+      },
+    };
+
+    return {
+      ...state,
+      notes: updatedNotes,
+      error: null,
+      status: 'success',
+    };
+  }),
+  on(noteActions.selectNoteFail, (state, { error }) => ({
     ...state,
     error: error,
     status: 'error',
