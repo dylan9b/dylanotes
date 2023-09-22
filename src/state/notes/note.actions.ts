@@ -3,7 +3,7 @@ import { createActionGroup, props } from '@ngrx/store';
 import { INoteResponse } from 'src/app/notes/item/_models/note-response.model';
 
 export const noteActions = createActionGroup({
-  source: '[NOTES]',
+  source: 'NOTES',
   events: {
     // GET NOTES
     'Load Notes': props<{ searchTerm: string, isFiltered: boolean }>(),

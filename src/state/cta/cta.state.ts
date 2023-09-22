@@ -1,3 +1,8 @@
 export interface CTAState {
-  state: 'pending' | 'success';
+  cta: CTAResponse;
+}
+
+export interface CTAResponse {
+  status: 'pending' | 'loading' | 'error' | 'success';
+  action: 'back' | 'search' | 'add' | null;
 }

@@ -3,7 +3,7 @@ import {
   DestroyRef,
   OnInit,
   ViewEncapsulation,
-  inject
+  inject,
 } from '@angular/core';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -14,6 +14,9 @@ import { map } from 'rxjs';
 import { Animations } from 'src/app/animations/animations';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { AppState } from 'src/state/app.state';
+import { ctaActions } from 'src/state/cta/cta.actions';
+import { selectCta } from 'src/state/cta/cta.selectors';
+import { CTAResponse } from 'src/state/cta/cta.state';
 import { noteActions } from 'src/state/notes/note.actions';
 import { selectAllNotes } from 'src/state/notes/note.selectors';
 import { selectStatus } from '../../../state/notes/note.selectors';
@@ -37,6 +40,7 @@ export class NotesListComponent implements OnInit {
     .select(selectAllNotes)
     .pipe(map((data) => Object.values(data)));
   status$ = this._store.select(selectStatus);
+  cta$ = this._store.select(selectCta);
 
   noteSteps = NotesStep;
   isEmptyResult: boolean = false;
@@ -53,17 +57,22 @@ export class NotesListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this._store.dispatch(noteActions.loadNotes({ searchTerm: '', isFiltered: false }));
+    this._store.dispatch(
+      noteActions.loadNotes({ searchTerm: '', isFiltered: false })
+    );
+    this._store.dispatch(ctaActions.loadCTA());
   }
 
   /**
    * Retrieves the list of notes based on a search term.
-   * 
+   *
    * @param input - The search term.
    */
   searchNotes(input: Event): void {
     const searchTerm = (input?.target as HTMLInputElement)?.value || '';
-    this._store.dispatch(noteActions.loadNotes({ searchTerm, isFiltered: true }));
+    this._store.dispatch(
+      noteActions.loadNotes({ searchTerm, isFiltered: true })
+    );
   }
 
   /**
@@ -81,7 +90,7 @@ export class NotesListComponent implements OnInit {
 
   /**
    * On clicking a note, updated its 'isSelected' property.
-   * 
+   *
    * @param note - The clicked note.
    * @param status - The note state.
    */
@@ -98,7 +107,7 @@ export class NotesListComponent implements OnInit {
 
   /**
    * On ending the animation, redirect the user to the note item page.
-   * 
+   *
    * @param note - The selected note.
    */
   onSelectNoteAnimationEnd(note: INoteResponse): void {
@@ -107,8 +116,23 @@ export class NotesListComponent implements OnInit {
     }
   }
 
-  onAddNoteAnimationEnd(): void {
-    if (this.isAddNoteClicked) {
+  onSearchNote(): void {
+    let cta = {} as CTAResponse;
+    cta = { ...cta, action: 'search' };
+
+    this._store.dispatch(ctaActions.updateCTA({ cta }));
+  }
+
+  onAddNote(): void {
+    this.isAddNoteClicked = true;
+    let cta = {} as CTAResponse;
+    cta = { ...cta, action: 'add' };
+
+    this._store.dispatch(ctaActions.updateCTA({ cta }));
+  }
+
+  onAddNoteAnimationEnd(cta: CTAResponse): void {
+    if (cta.action === 'add') {
       this._router.navigate(['/notes', 'new']);
       this.isAddNoteClicked = !this.isAddNoteClicked;
     }

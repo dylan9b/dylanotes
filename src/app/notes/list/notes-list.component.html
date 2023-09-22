@@ -1,6 +1,6 @@
 <app-header [input]="{ showGoBackIcon: false, step: noteSteps.LIST }"></app-header>
 
-<section class="app-notes-list">
+<section class="app-notes-list" *ngIf="(cta$ | async) as cta">
   <div class="container">
     <div class="row mt-3 py-2">
       <div class="col-12 col-lg-4 mx-auto">
@@ -18,13 +18,11 @@
         </div>
 
         <div class="row app-notes-list__items" *ngIf="(status$ | async) as status">
-          <ng-container *ngFor="let note of allNotes$ | async; let i = index; trackBy: noteTrackByFn">
+          <div *ngFor="let note of allNotes$ | async; let i = index; trackBy: noteTrackByFn">
             <div class="col-12 app-notes-list__item" (click)="onNoteItemClick(note, status)"
               [@delete]="note?.isArchived ? 'delete' : 'void'" [@selectNote]="note?.isSelected ? 'selectNote' : 'void'"
               (@selectNote.done)="onSelectNoteAnimationEnd(note)">
-
               <a>
-
                 <div class="app-notes-list__item__footer">
                   <mat-icon class="app-notes-list__item__icon me-1" (click)="pinNote(note)"
                     [@pinUnpin]="note?.isPinned ? 'pinned' : 'unPinned'" aria-label="Pin Note">
@@ -52,7 +50,7 @@
                 </div>
               </a>
             </div>
-          </ng-container>
+          </div>
         </div>
 
         <div *ngIf="!isLoading && isEmptyResult">
@@ -68,8 +66,8 @@
         </div>
 
         <!-- ADD CTA - START -->
-        <button matRipple type="button" class="app-notes-list__add" (click)="isAddNoteClicked = true"
-          [@cta]="isAddNoteClicked ? 'cta-click' : 'void'" (@cta.done)="onAddNoteAnimationEnd()">
+        <button matRipple type="button" class="app-notes-list__add" (click)="onAddNote()"
+          [@cta]="cta.action === 'add' ? 'cta-click' : 'void'" (@cta.done)="onAddNoteAnimationEnd(cta)">
           <mat-icon matRipple aria-label="New Note">
             add
           </mat-icon>
@@ -78,8 +76,8 @@
 
 
         <!-- SEARCH CTA - START -->
-        <button matRipple type="button" class="app-notes-list__search" (click)="isAddNoteClicked = true"
-          [@cta]="isAddNoteClicked ? 'cta-click' : 'void'">
+        <button matRipple type="button" class="app-notes-list__search" (click)="onSearchNote()"
+          [@cta]="cta.action === 'search' ? 'cta-click' : 'void'">
           <mat-icon matRipple aria-label="Search Note">
             search
           </mat-icon>

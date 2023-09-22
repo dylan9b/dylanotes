@@ -1,24 +1,26 @@
-import { isDevMode, NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { NgModule, isDevMode } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  MAT_SNACK_BAR_DEFAULT_OPTIONS,
+  MatSnackBarModule,
+} from '@angular/material/snack-bar';
 
+import { CommonModule } from '@angular/common';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { ApiErrorService } from '@services/api-error.service';
+import { CtaEffects } from 'src/state/cta/cta.effects';
+import { ctaReducer } from 'src/state/cta/cta.reducer';
+import { NoteEffects } from 'src/state/notes/note.effects';
+import { noteReducer } from 'src/state/notes/note.reducer';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NotesRoutingModule } from './notes/notes-routing.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ApiErrorService } from '@services/api-error.service';
-import {
-  MatSnackBarModule,
-  MAT_SNACK_BAR_DEFAULT_OPTIONS,
-} from '@angular/material/snack-bar';
 import { ErrorInterceptor } from './http-interceptors/error-interceptor';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { noteReducer } from 'src/state/notes/note.reducer';
-import { NoteEffects } from 'src/state/notes/note.effects';
+import { NotesRoutingModule } from './notes/notes-routing.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -34,7 +36,7 @@ import { NoteEffects } from 'src/state/notes/note.effects';
     MatSnackBarModule,
 
     StoreModule.forRoot(
-      { notes: noteReducer },
+      { notes: noteReducer, cta: ctaReducer },
       {
         runtimeChecks: {
           strictActionImmutability: true,
@@ -52,7 +54,7 @@ import { NoteEffects } from 'src/state/notes/note.effects';
       trace: false, //  If set to true, will include stack trace for every dispatched action, so you can see it in trace tab jumping directly to that part of code
       traceLimit: 75, // maximum stack trace frames to be stored (in case trace option was provided as true)
     }),
-    EffectsModule.forRoot([NoteEffects]),
+    EffectsModule.forRoot([NoteEffects, CtaEffects]),
   ],
   providers: [
     {

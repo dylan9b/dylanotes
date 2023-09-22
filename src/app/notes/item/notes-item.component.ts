@@ -1,6 +1,7 @@
 import {
   Component,
   DestroyRef,
+  OnDestroy,
   OnInit,
   ViewEncapsulation,
   inject,
@@ -15,6 +16,7 @@ import { Store } from '@ngrx/store';
 import { NoteUtilService } from '@services/note-util.service';
 import { Animations } from 'src/app/animations/animations';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
+import { ctaActions } from 'src/state/cta/cta.actions';
 import { noteActions } from 'src/state/notes/note.actions';
 import { selectNote } from 'src/state/notes/note.selectors';
 import { AppState } from '../../../state/app.state';
@@ -30,7 +32,7 @@ import { INoteResponse } from './_models/note-response.model';
   encapsulation: ViewEncapsulation.None,
   animations: [Animations.pinUnpin, Animations.completeIncomplete],
 })
-export class NotesItemComponent implements OnInit {
+export class NotesItemComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   validation!: NotesItemValidation | null;
   noteSteps = NotesStep;
@@ -50,6 +52,12 @@ export class NotesItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.subscribeRouteParams();
+  }
+
+  ngOnDestroy(): void {
+    this._store.dispatch(
+      ctaActions.updateCTA({ cta: { action: null, status: 'pending' } })
+    );
   }
 
   /**
@@ -125,7 +133,7 @@ export class NotesItemComponent implements OnInit {
 
             return this.note$;
           }
-        }),
+        })
       )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((note) => {
