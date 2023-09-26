@@ -1,5 +1,6 @@
 import { createActionGroup, props } from '@ngrx/store';
 
+import { Update } from '@ngrx/entity';
 import { INoteResponse } from 'src/app/notes/item/_models/note-response.model';
 
 export const noteActions = createActionGroup({
@@ -7,17 +8,17 @@ export const noteActions = createActionGroup({
   events: {
     // GET NOTES
     'Load Notes': props<{ searchTerm: string, isFiltered: boolean }>(),
-    'Load Notes Success': props<{ notes: Record<string, INoteResponse>, isFiltered: boolean }>(),
+    'Load Notes Success': props<{ notes: INoteResponse[], isFiltered: boolean }>(),
     'Load Notes Fail': props<{ error: string }>(),
 
     // UPDATE NOTE
     'Update Note': props<{ note: INoteResponse }>(),
-    'Update Note Success': props<{ note: INoteResponse }>(),
+    'Update Note Success': props<{ note: Update<INoteResponse> }>(),
     'Update Note Fail': props<{ error: string }>(),
 
     // ARCHIVE NOTE
     'Archive Note': props<{ id: string }>(),
-    'Archive Note Success': props<{ note: INoteResponse }>(),
+    'Archive Note Success': props<{ note: Update<INoteResponse> }>(),
     'Archive Note Fail': props<{ error: string }>(),
 
     // POST NOTE
@@ -27,7 +28,7 @@ export const noteActions = createActionGroup({
 
     // SELECT NOTE
     'Select Note': props<{ note: INoteResponse }>(),
-    'Select Note Success': props<{ note: INoteResponse }>(),
+    'Select Note Success': props<{ note: Update<INoteResponse> }>(),
     'Select Note Fail': props<{ error: string }>(),
   },
 });

@@ -10,7 +10,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { NoteUtilService } from '@services/note-util.service';
-import { map } from 'rxjs';
 import { Animations } from 'src/app/animations/animations';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { AppState } from 'src/state/app.state';
@@ -37,9 +36,7 @@ import { INoteResponse } from '../item/_models/note-response.model';
   encapsulation: ViewEncapsulation.None,
 })
 export class NotesListComponent implements OnInit {
-  allNotes$ = this._store
-    .select(selectAllNotes)
-    .pipe(map((data) => Object.values(data)));
+  allNotes$ = this._store.select(selectAllNotes);
 
   notes!: INoteResponse[];
   status$ = this._store.select(selectStatus);
@@ -53,10 +50,10 @@ export class NotesListComponent implements OnInit {
   isAddNoteClicked: boolean = false;
 
   constructor(
-    private _store: Store<AppState>,
-    private _snackBar: MatSnackBar,
-    private _noteUtilService: NoteUtilService,
-    private _router: Router
+    private readonly _store: Store<AppState>,
+    private readonly _snackBar: MatSnackBar,
+    private readonly _noteUtilService: NoteUtilService,
+    private readonly _router: Router
   ) {}
 
   ngOnInit(): void {
@@ -122,13 +119,17 @@ export class NotesListComponent implements OnInit {
   }
 
   onSearchNote(): void {
-    this._store.dispatch(ctaActions.updateCTA({ action: CTA_ACTION_STATES.SEARCH }));
+    this._store.dispatch(
+      ctaActions.updateCTA({ action: CTA_ACTION_STATES.SEARCH })
+    );
   }
 
   onAddNote(): void {
     this.isAddNoteClicked = true;
 
-    this._store.dispatch(ctaActions.updateCTA({ action: CTA_ACTION_STATES.ADD }));
+    this._store.dispatch(
+      ctaActions.updateCTA({ action: CTA_ACTION_STATES.ADD })
+    );
   }
 
   onAddNoteAnimationEnd(action: string): void {

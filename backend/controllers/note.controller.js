@@ -28,13 +28,7 @@ router.route("/list").get((req, res, next) => {
         if (error) {
           return next(error);
         } else {
-          let objectData = {};
-
-          data.forEach((item) => {
-            objectData[item._id] = item;
-          });
-
-          res.json({ data: objectData });
+          res.json({ data });
         }
       }
     ).sort({ dateModified: -1 });
@@ -43,13 +37,7 @@ router.route("/list").get((req, res, next) => {
       if (error) {
         return next(error);
       } else {
-        let objectData = {};
-
-        data.forEach((item) => {
-          objectData[item._id] = item;
-        });
-
-        res.json({ data: objectData });
+        res.json({ data });
       }
     }).sort({ dateModified: -1 });
   }

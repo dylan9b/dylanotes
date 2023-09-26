@@ -1,25 +1,24 @@
 import { FormGroup } from '@angular/forms';
 
 export class NotesItemValidation {
+  constructor(private readonly _form: FormGroup) {}
 
-    constructor(private form: FormGroup) { }
+  INPUT = {
+    TITLE: 'title',
+    BODY: 'body',
+  };
 
-    INPUT = {
-        TITLE: 'title',
-        BODY: 'body'
-    }
+  isTitleInvalid(): boolean | undefined {
+    return (
+      this._form?.get(this.INPUT?.TITLE)?.invalid &&
+      (this._form?.get(this.INPUT?.TITLE)?.touched ||
+        this._form?.get(this.INPUT?.TITLE)?.dirty)
+    );
+  }
 
-    isTitleInvalid(): boolean | undefined {
-        return (this.form?.get(this.INPUT?.TITLE)?.invalid &&
-            (this.form?.get(this.INPUT?.TITLE)?.touched
-                || this.form?.get(this.INPUT?.TITLE)?.dirty)
-        );
-    }
-
-    isBodyInvalid(): boolean | null {
-        return (this.form?.get(this.INPUT?.BODY)?.invalid &&
-            (this.form?.get(this.INPUT?.BODY)?.touched
-                || this.form?.get(this.INPUT?.BODY)?.dirty)
-        ) as boolean | null;
-    }
+  isBodyInvalid(): boolean | null {
+    return (this._form?.get(this.INPUT?.BODY)?.invalid &&
+      (this._form?.get(this.INPUT?.BODY)?.touched ||
+        this._form?.get(this.INPUT?.BODY)?.dirty)) as boolean | null;
+  }
 }

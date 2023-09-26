@@ -1,19 +1,20 @@
 import {
+  HttpHandler,
   HttpInterceptor,
   HttpRequest,
-  HttpHandler,
 } from '@angular/common/http';
+
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiErrorService } from '@services/api-error.service';
 import { tap } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
   constructor(
-    private _apiErrorService: ApiErrorService,
-    private _snackBar: MatSnackBar
+    private readonly _apiErrorService: ApiErrorService,
+    private readonly _snackBar: MatSnackBar
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {

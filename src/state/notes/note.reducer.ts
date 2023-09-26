@@ -1,16 +1,15 @@
 import { createReducer, on } from '@ngrx/store';
 
-import { INoteResponse } from 'src/app/notes/item/_models/note-response.model';
 import { STATUS } from '../cta/cta.state';
 import { noteActions } from './note.actions';
+import { notesAdapter } from './notes.adapter';
 import { NoteState } from './notes.state';
 
-export const initialState: NoteState = {
-  notes: {},
+export const initialState: NoteState = notesAdapter.getInitialState({
   error: null,
   status: STATUS.ERROR,
   isFiltered: false,
-};
+});
 
 export const noteReducer = createReducer(
   initialState,
@@ -22,22 +21,14 @@ export const noteReducer = createReducer(
     isFiltered: state.isFiltered,
   })),
   on(noteActions.loadNotesSuccess, (state, { notes, isFiltered }) => {
-    let updatedNotes = {};
-
-    for (let item of Object.keys(notes)) {
-      let updatedItem = Object.assign({}, notes[item], {
-        isSelected: false,
-      });
-
-      updatedNotes = {
-        ...updatedNotes,
-        [updatedItem._id]: { ...updatedItem },
-      };
-    }
-
     return {
       ...state,
-      notes: updatedNotes,
+      ...notesAdapter.setMany(
+        notes?.map((note) => {
+          return { ...note, isSelected: false };
+        }),
+        state
+      ),
       isFiltered,
       error: null,
       status: STATUS.SUCCESS,
@@ -50,19 +41,11 @@ export const noteReducer = createReducer(
   })),
 
   // UPDATE NOTE
-  on(noteActions.updateNote, (state) => ({ ...state,     status: STATUS.LOADING  })),
+  on(noteActions.updateNote, (state) => ({ ...state, status: STATUS.LOADING })),
   on(noteActions.updateNoteSuccess, (state, { note }) => {
-    const updatedNotes = {
-      ...state.notes,
-      [note._id]: {
-        ...state.notes[note._id],
-        ...note,
-      },
-    };
-
     return {
       ...state,
-      notes: updatedNotes,
+      ...notesAdapter.updateOne(note, state),
       error: null,
       status: STATUS.SUCCESS,
     };
@@ -74,24 +57,14 @@ export const noteReducer = createReducer(
   })),
 
   // ARCHIVE NOTE
-  on(noteActions.archiveNote, (state) => ({ ...state, status: STATUS.LOADING })),
+  on(noteActions.archiveNote, (state) => ({
+    ...state,
+    status: STATUS.LOADING,
+  })),
   on(noteActions.archiveNoteSuccess, (state, { note }) => {
-    note = {
-      ...note,
-      isArchived: true,
-    };
-
-    const updatedNotes = {
-      ...state.notes,
-      [note._id]: {
-        ...state.notes[note._id],
-        isArchived: true,
-      },
-    };
-
     return {
       ...state,
-      notes: updatedNotes,
+      ...notesAdapter.updateOne(note, state),
       error: null,
       status: STATUS.SUCCESS,
     };
@@ -105,21 +78,9 @@ export const noteReducer = createReducer(
   // POST NOTE
   on(noteActions.postNote, (state) => ({ ...state, status: STATUS.LOADING })),
   on(noteActions.postNoteSuccess, (state, { note }) => {
-    let newNote: Record<string, INoteResponse> = {};
-    newNote = {
-      [note._id]: {
-        ...note,
-      },
-    };
-
-    const updatedNotes = {
-      ...newNote,
-      ...state.notes,
-    };
-
     return {
       ...state,
-      notes: updatedNotes,
+      ...notesAdapter.addOne(note, state),
       error: null,
       status: STATUS.SUCCESS,
     };
@@ -133,17 +94,9 @@ export const noteReducer = createReducer(
   // SELECT NOTE
   on(noteActions.selectNote, (state) => ({ ...state, status: STATUS.LOADING })),
   on(noteActions.selectNoteSuccess, (state, { note }) => {
-    const updatedNotes = {
-      ...state.notes,
-      [note._id]: {
-        ...state.notes[note._id],
-        isSelected: true,
-      },
-    };
-
     return {
       ...state,
-      notes: updatedNotes,
+      ...notesAdapter.updateOne(note, state),
       error: null,
       status: STATUS.SUCCESS,
     };

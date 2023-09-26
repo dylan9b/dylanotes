@@ -1,9 +1,9 @@
 import { Observable, catchError, map } from 'rxjs';
 
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { INoteRequest } from 'src/app/notes/item/_models/note-request.model';
 import { INoteResponse } from 'src/app/notes/item/_models/note-response.model';
-import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
 export class NoteService {
   baseUrl: string;
 
-  constructor(private _http: HttpClient) {
+  constructor(private readonly _http: HttpClient) {
     this.baseUrl = `${environment.BASE_URL}/api`;
   }
 
@@ -20,24 +20,18 @@ export class NoteService {
    * Retrieves the notes based on the search term provided.
    *
    * @param searchTerm - The search term.
-   * @returns { Observable<{ Record<string, INoteResponse> }> } - An observable array of note item responses.
+   * @returns { Observable<INoteResponse[]> } - An observable array of note item responses.
    */
-  getNotes(
-    searchTerm?: string | null
-  ): Observable<Record<string, INoteResponse>> {
+  getNotes(searchTerm?: string | null): Observable<INoteResponse[]> {
     return this._http
-      .get<{ data: Record<string, INoteResponse> }>(
-        `${this.baseUrl}/notes/list`,
-        {
-          params: { searchTerm: searchTerm as string },
-        }
-      )
+      .get<{ data: INoteResponse[] }>(`${this.baseUrl}/notes/list`, {
+        params: { searchTerm: searchTerm as string },
+      })
       .pipe(
         map((response) => {
           return response?.data;
         }),
         catchError((error) => {
-          debugger;
           throw error;
         })
       );

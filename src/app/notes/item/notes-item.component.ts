@@ -39,16 +39,16 @@ export class NotesItemComponent implements OnInit, OnDestroy {
   noteSteps = NotesStep;
   note!: INoteResponse;
 
-  note$!: Observable<INoteResponse | null>;
+  note$: Observable<INoteResponse | null> = of(null);
   destroyRef = inject(DestroyRef);
 
   constructor(
-    private _route: ActivatedRoute,
-    private _router: Router,
-    private _formBuilder: FormBuilder,
-    private _snackBar: MatSnackBar,
-    private _store: Store<AppState>,
-    private _noteUtilService: NoteUtilService
+    private readonly _route: ActivatedRoute,
+    private readonly _router: Router,
+    private readonly _formBuilder: FormBuilder,
+    private readonly _snackBar: MatSnackBar,
+    private readonly _store: Store<AppState>,
+    private readonly _noteUtilService: NoteUtilService
   ) {}
 
   ngOnInit(): void {

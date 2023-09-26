@@ -1,17 +1,17 @@
-import { AppState } from '../app.state';
-import { NoteState } from './notes.state';
 import { createSelector } from '@ngrx/store';
+import { AppState } from '../app.state';
+import { notesAdapter } from './notes.adapter';
+import { NoteState } from './notes.state';
 
 export const selectNotesState = (state: AppState) => state?.notes;
 
-export const selectAllNotes = createSelector(
-  selectNotesState,
-  (state: NoteState) => state?.notes
-);
+const { selectAll } = notesAdapter.getSelectors();
+
+export const selectAllNotes = createSelector(selectNotesState, selectAll);
 
 export const selectNote = (id: string) =>
   createSelector(selectNotesState, (state: NoteState) => {
-    return state?.notes[id];
+    return state?.entities[id] || null;
   });
 
 export const selectStatus = createSelector(

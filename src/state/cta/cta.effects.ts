@@ -9,25 +9,12 @@ import { selectCta } from './cta.selectors';
 
 @Injectable()
 export class CtaEffects {
-  constructor(private _actions$: Actions, private _store: Store<AppState>) {}
+  constructor(
+    private readonly _actions$: Actions,
+    private readonly _store: Store<AppState>
+  ) {}
 
   cta$ = this._store.select(selectCta);
-
-  // loadCta$ = createEffect(() =>
-  //   this._actions$.pipe(
-  //     ofType(ctaActions.loadCTA),
-  //     withLatestFrom(this.cta$),
-  //     switchMap([(action, data]) => {
-  //     }),
-  // pipe(
-  //   map((data) => {
-  //     debugger;
-  //     return ctaActions.loadCTASuccess({ cta: data as unknown as CTAResponse });
-  //   }),
-  //   catchError((error) => of(ctaActions.loadCTAFail({ error })))
-  // )
-  //   )
-  // );
 
   loadCta$ = createEffect(() =>
     this._actions$.pipe(

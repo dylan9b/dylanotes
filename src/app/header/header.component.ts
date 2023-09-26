@@ -25,11 +25,14 @@ export class HeaderComponent {
     this._input = value;
   }
 
-  constructor(private _router: Router, private _store: Store<AppState>) {}
+  constructor(
+    private readonly _router: Router,
+    private readonly _store: Store<AppState>
+  ) {}
 
   goBack(): void {
     this._store.dispatch(ctaActions.updateCTA({ action: 'back' }));
-    
+
     if (this.input.step === NotesStep.ITEM) {
       this._router.navigate(['./notes', 'list']);
     }

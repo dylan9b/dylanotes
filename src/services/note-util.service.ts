@@ -1,15 +1,15 @@
-import { AppState } from 'src/state/app.state';
-import { INoteRequest } from 'src/app/notes/item/_models/note-request.model';
-import { INoteResponse } from 'src/app/notes/item/_models/note-response.model';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { INoteRequest } from 'src/app/notes/item/_models/note-request.model';
+import { INoteResponse } from 'src/app/notes/item/_models/note-response.model';
+import { AppState } from 'src/state/app.state';
 import { noteActions } from 'src/state/notes/note.actions';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NoteUtilService {
-  constructor(private _store: Store<AppState>) {}
+  constructor(private readonly _store: Store<AppState>) {}
 
   /**
    * Pins/unpins a note.
