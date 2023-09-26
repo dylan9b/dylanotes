@@ -2,6 +2,7 @@ const express = require("express");
 var router = express.Router();
 
 var { Note } = require("../models/note.model");
+const e = require("express");
 
 // Get all notes
 router.route("/list").get((req, res, next) => {
@@ -49,7 +50,7 @@ router.route("/:id").get((req, res, next) => {
     if (error) {
       return next(error);
     } else {
-      res.json({ data: data });
+      res.json({ data });
     }
   });
 });
@@ -60,7 +61,7 @@ router.route("/new").post((req, res, next) => {
     if (error) {
       return next(error);
     } else {
-      res.json({ data: data });
+      res.json({ data });
     }
   });
 });
@@ -83,7 +84,7 @@ router.route("/:id").put((req, res, next) => {
       if (error) {
         return next(error);
       } else {
-        res.json({ data: data });
+        res.json({ data });
       }
     }
   );
@@ -99,7 +100,7 @@ router.route("/:id").delete((req, res, next) => {
       if (error) {
         return next(error);
       } else {
-        res.json({ data: data });
+        res.json({ data });
       }
     }
   );

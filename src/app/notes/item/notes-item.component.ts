@@ -11,7 +11,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, map, of, switchMap } from 'rxjs';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
 import { NoteUtilService } from '@services/note-util.service';
 import { Animations } from 'src/app/animations/animations';
@@ -46,7 +45,6 @@ export class NotesItemComponent implements OnInit, OnDestroy {
     private readonly _route: ActivatedRoute,
     private readonly _router: Router,
     private readonly _formBuilder: FormBuilder,
-    private readonly _snackBar: MatSnackBar,
     private readonly _store: Store<AppState>,
     private readonly _noteUtilService: NoteUtilService
   ) {}
@@ -184,10 +182,6 @@ export class NotesItemComponent implements OnInit, OnDestroy {
 
     this._store.dispatch(noteActions.postNote({ note: newNote }));
 
-    this._snackBar.open('Note successfully created!', 'Success', {
-      panelClass: 'status__200',
-    });
-
     this._router.navigate(['/notes', 'list']);
   }
 
@@ -208,9 +202,5 @@ export class NotesItemComponent implements OnInit, OnDestroy {
     };
 
     this._store.dispatch(noteActions.updateNote({ note: updatedNote }));
-
-    this._snackBar.open('Note successfully updated!', 'Success', {
-      panelClass: 'status__200',
-    });
   }
 }

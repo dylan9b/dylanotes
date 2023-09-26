@@ -5,8 +5,9 @@ import {
   ViewEncapsulation,
   inject,
 } from '@angular/core';
+import { CTA_ACTION_STATES, STATUS } from 'src/state/cta/cta.state';
+import { selectAllNotes, selectNotesTotal } from 'src/state/notes/note.selectors';
 
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { NoteUtilService } from '@services/note-util.service';
@@ -15,9 +16,7 @@ import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { AppState } from 'src/state/app.state';
 import { ctaActions } from 'src/state/cta/cta.actions';
 import { selectCta } from 'src/state/cta/cta.selectors';
-import { CTA_ACTION_STATES } from 'src/state/cta/cta.state';
 import { noteActions } from 'src/state/notes/note.actions';
-import { selectAllNotes } from 'src/state/notes/note.selectors';
 import { selectStatus } from '../../../state/notes/note.selectors';
 import { INoteResponse } from '../item/_models/note-response.model';
 
@@ -37,8 +36,8 @@ import { INoteResponse } from '../item/_models/note-response.model';
 })
 export class NotesListComponent implements OnInit {
   allNotes$ = this._store.select(selectAllNotes);
+  totalNumOfNotes$ = this._store.select(selectNotesTotal);
 
-  notes!: INoteResponse[];
   status$ = this._store.select(selectStatus);
   cta$ = this._store.select(selectCta);
 
@@ -47,11 +46,8 @@ export class NotesListComponent implements OnInit {
   isLoading: boolean = false;
   destroyRef = inject(DestroyRef);
 
-  isAddNoteClicked: boolean = false;
-
   constructor(
     private readonly _store: Store<AppState>,
-    private readonly _snackBar: MatSnackBar,
     private readonly _noteUtilService: NoteUtilService,
     private readonly _router: Router
   ) {}
@@ -61,8 +57,6 @@ export class NotesListComponent implements OnInit {
       noteActions.loadNotes({ searchTerm: '', isFiltered: false })
     );
     this._store.dispatch(ctaActions.loadCTA());
-
-    this.allNotes$.subscribe((x) => (this.notes = x));
   }
 
   /**
@@ -84,10 +78,6 @@ export class NotesListComponent implements OnInit {
    */
   removeNote(id: string): void {
     this._store.dispatch(noteActions.archiveNote({ id }));
-
-    this._snackBar.open('Note successfully deleted!', 'Success', {
-      panelClass: 'status__200',
-    });
   }
 
   /**
@@ -97,13 +87,8 @@ export class NotesListComponent implements OnInit {
    * @param status - The note state.
    */
   onNoteItemClick(note: INoteResponse, status: string): void {
-    if (status !== 'loading') {
-      note = {
-        ...note,
-        isSelected: true,
-      };
-
-      this._store.dispatch(noteActions.selectNote({ note: note }));
+    if (status !== STATUS.LOADING) {
+      this._store.dispatch(noteActions.selectNote({ id: note._id }));
     }
   }
 
@@ -125,17 +110,14 @@ export class NotesListComponent implements OnInit {
   }
 
   onAddNote(): void {
-    this.isAddNoteClicked = true;
-
     this._store.dispatch(
       ctaActions.updateCTA({ action: CTA_ACTION_STATES.ADD })
     );
   }
 
   onAddNoteAnimationEnd(action: string): void {
-    if (action === 'add') {
+    if (action === CTA_ACTION_STATES.ADD) {
       this._router.navigate(['/notes', 'new']);
-      this.isAddNoteClicked = !this.isAddNoteClicked;
     }
   }
 

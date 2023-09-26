@@ -18,9 +18,9 @@
         </div>
 
         <div class="row app-notes-list__items" *ngIf="(status$ | async) as status">
-          <div [@listAnimation]="notes?.length">
+          <div [@listAnimation]="totalNumOfNotes$ | async">
 
-            <div *ngFor="let note of notes; let i = index; trackBy: noteTrackByFn">
+            <div *ngFor="let note of allNotes$ | async; let i = index; trackBy: noteTrackByFn">
               <div class="col-12 app-notes-list__item" (click)="onNoteItemClick(note, status)"
                 [@delete]="note?.isArchived ? 'delete' : 'void'"
                 [@selectNote]="note?.isSelected ? 'selectNote' : 'void'"

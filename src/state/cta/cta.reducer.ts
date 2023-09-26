@@ -16,8 +16,6 @@ export const ctaReducer = createReducer(
     status: STATUS.LOADING,
   })),
   on(ctaActions.loadCTASuccess, (state) => {
-    debugger;
-
     return {
       ...state,
       action: state.action,

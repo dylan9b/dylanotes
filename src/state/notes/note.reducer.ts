@@ -43,6 +43,9 @@ export const noteReducer = createReducer(
   // UPDATE NOTE
   on(noteActions.updateNote, (state) => ({ ...state, status: STATUS.LOADING })),
   on(noteActions.updateNoteSuccess, (state, { note }) => {
+    const a = notesAdapter.updateOne(note, state);
+    debugger;
+
     return {
       ...state,
       ...notesAdapter.updateOne(note, state),

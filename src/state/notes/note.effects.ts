@@ -10,6 +10,7 @@ import {
 } from 'rxjs';
 
 import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Update } from '@ngrx/entity';
 import { Store } from '@ngrx/store';
 import { NoteService } from '@services/note.service';
@@ -23,7 +24,8 @@ export class NoteEffects {
   constructor(
     private readonly _actions$: Actions,
     private readonly _noteService: NoteService,
-    private readonly _store: Store<AppState>
+    private readonly _store: Store<AppState>,
+    private readonly _snackBar: MatSnackBar
   ) {}
 
   allNotes$ = this._store.select(selectAllNotes);
@@ -67,6 +69,10 @@ export class NoteEffects {
               changes: { ...note },
             };
 
+            this._snackBar.open('Note successfully updated!', 'Success', {
+              panelClass: 'status__200',
+            });
+
             return noteActions.updateNoteSuccess({ note: updatedNote });
           }),
 
@@ -87,6 +93,10 @@ export class NoteEffects {
               changes: { isArchived: true },
             };
 
+            this._snackBar.open('Note successfully deleted!', 'Success', {
+              panelClass: 'status__200',
+            });
+
             return noteActions.archiveNoteSuccess({ note: updatedNote });
           }),
           catchError((error) => of(noteActions.archiveNoteFail({ error })))
@@ -100,7 +110,13 @@ export class NoteEffects {
       ofType(noteActions.postNote),
       switchMap((noteQuery) =>
         from(this._noteService.postNote(noteQuery?.note)).pipe(
-          map((note) => noteActions.postNoteSuccess({ note: note })),
+          map((note) => {
+            this._snackBar.open('Note successfully created!', 'Success', {
+              panelClass: 'status__200',
+            });
+
+            return noteActions.postNoteSuccess({ note: note });
+          }),
           catchError((error) => of(noteActions.postNoteFail({ error })))
         )
       )
@@ -113,7 +129,7 @@ export class NoteEffects {
       pipe(
         map((payload) => {
           const updatedNote: Update<INoteResponse> = {
-            id: payload?.note?._id,
+            id: payload?.id,
             changes: { isSelected: true },
           };
 
