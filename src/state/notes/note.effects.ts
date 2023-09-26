@@ -1,12 +1,12 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, from, map, of, pipe, switchMap, withLatestFrom } from 'rxjs';
-import { selectAllNotes } from './note.selectors';
 
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { NoteService } from '@services/note.service';
 import { AppState } from '../app.state';
 import { noteActions } from './note.actions';
+import { selectAllNotes } from './note.selectors';
 
 @Injectable()
 export class NoteEffects {
@@ -17,6 +17,7 @@ export class NoteEffects {
   ) {}
 
   allNotes$ = this._store.select(selectAllNotes);
+  
 
   loadNotes$ = createEffect(() =>
     this._actions$.pipe(
