@@ -1,6 +1,7 @@
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule, isDevMode } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MAT_BOTTOM_SHEET_DEFAULT_OPTIONS, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import {
   MAT_SNACK_BAR_DEFAULT_OPTIONS,
   MatSnackBarModule,
@@ -34,6 +35,7 @@ import { NotesRoutingModule } from './notes/notes-routing.module';
     HttpClientModule,
     BrowserAnimationsModule,
     MatSnackBarModule,
+    MatBottomSheetModule,
 
     StoreModule.forRoot(
       { notes: noteReducer, cta: ctaReducer },
@@ -70,6 +72,10 @@ import { NotesRoutingModule } from './notes/notes-routing.module';
         horizontalPosition: 'right',
         verticalPosition: 'top',
       },
+    },
+    {
+      provide: MAT_BOTTOM_SHEET_DEFAULT_OPTIONS,
+      useValue: {},
     },
   ],
   bootstrap: [AppComponent],

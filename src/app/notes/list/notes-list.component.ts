@@ -6,11 +6,17 @@ import {
   inject,
 } from '@angular/core';
 import { CTA_ACTION_STATES, STATUS } from 'src/state/cta/cta.state';
-import { selectAllNotes, selectNotesTotal } from 'src/state/notes/note.selectors';
+import {
+  selectAllNotes,
+  selectIsFiltered,
+  selectNotesTotal,
+} from 'src/state/notes/note.selectors';
 
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { NoteUtilService } from '@services/note-util.service';
+import { take } from 'rxjs';
 import { Animations } from 'src/app/animations/animations';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { AppState } from 'src/state/app.state';
@@ -19,6 +25,7 @@ import { selectCta } from 'src/state/cta/cta.selectors';
 import { noteActions } from 'src/state/notes/note.actions';
 import { selectStatus } from '../../../state/notes/note.selectors';
 import { INoteResponse } from '../item/_models/note-response.model';
+import { NoteSearchComponent } from '../search/note-search.component';
 
 @Component({
   selector: 'app-notes-list',
@@ -37,19 +44,20 @@ import { INoteResponse } from '../item/_models/note-response.model';
 export class NotesListComponent implements OnInit {
   allNotes$ = this._store.select(selectAllNotes);
   totalNumOfNotes$ = this._store.select(selectNotesTotal);
-
+  areNotesFiltered$ = this._store.select(selectIsFiltered);
+  
   status$ = this._store.select(selectStatus);
   cta$ = this._store.select(selectCta);
 
   noteSteps = NotesStep;
   isEmptyResult: boolean = false;
-  isLoading: boolean = false;
   destroyRef = inject(DestroyRef);
 
   constructor(
     private readonly _store: Store<AppState>,
     private readonly _noteUtilService: NoteUtilService,
-    private readonly _router: Router
+    private readonly _router: Router,
+    private readonly _bottomSheet: MatBottomSheet
   ) {}
 
   ngOnInit(): void {
@@ -57,18 +65,6 @@ export class NotesListComponent implements OnInit {
       noteActions.loadNotes({ searchTerm: '', isFiltered: false })
     );
     this._store.dispatch(ctaActions.loadCTA());
-  }
-
-  /**
-   * Retrieves the list of notes based on a search term.
-   *
-   * @param input - The search term.
-   */
-  searchNotes(input: Event): void {
-    const searchTerm = (input?.target as HTMLInputElement)?.value || '';
-    this._store.dispatch(
-      noteActions.loadNotes({ searchTerm, isFiltered: true })
-    );
   }
 
   /**
@@ -107,6 +103,22 @@ export class NotesListComponent implements OnInit {
     this._store.dispatch(
       ctaActions.updateCTA({ action: CTA_ACTION_STATES.SEARCH })
     );
+  }
+
+  onSearchNoteAnimationEned(action: string): void {
+    if (action === CTA_ACTION_STATES.SEARCH) {
+      const searchBottomSheet = this._bottomSheet.open(NoteSearchComponent);
+      searchBottomSheet
+        .afterDismissed()
+        .pipe(take(1))
+        .subscribe(() => {
+          this._store.dispatch(
+            ctaActions.updateCTA({ action: CTA_ACTION_STATES.PENDING })
+          );
+
+          this.allNotes$ = this._store.select(selectAllNotes);
+        });
+    }
   }
 
   onAddNote(): void {

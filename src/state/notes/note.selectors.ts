@@ -19,3 +19,8 @@ export const selectStatus = createSelector(
   selectNotesState,
   (state: NoteState) => state?.status
 );
+
+export const selectIsFiltered = createSelector(
+  selectNotesState,
+  (state: NoteState) => state?.isFiltered
+);

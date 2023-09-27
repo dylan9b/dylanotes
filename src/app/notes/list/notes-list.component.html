@@ -2,94 +2,72 @@
 
 <section class="app-notes-list" *ngIf="(cta$ | async) as cta">
   <div class="container">
-    <div class="row mt-3 py-2">
-      <div class="col-12 col-lg-4 mx-auto">
-        <div class="row">
-          <div class="col-12">
-            <span class="app-notes-list__filter__container">
-              <mat-form-field class="w-100">
-                <mat-icon matPrefix>search</mat-icon>
-                <mat-label>Filter notes</mat-label>
-                <input type="text" matInput formControlName="title" placeholder="Type to begin searching ..."
-                  (keydown.enter)="searchNotes($event)">
-              </mat-form-field>
-            </span>
-          </div>
-        </div>
+    <div class="row mt-3 py-2 app-notes-list__items" *ngIf="(status$ | async) as status">
+      <div [@listAnimation]="totalNumOfNotes$ | async">
 
-        <div class="row app-notes-list__items" *ngIf="(status$ | async) as status">
-          <div [@listAnimation]="totalNumOfNotes$ | async">
+        <div *ngFor="let note of allNotes$ | async; let i = index; trackBy: noteTrackByFn">
+          <div class="col-12 col-lg-4 mx-auto app-notes-list__item" (click)="onNoteItemClick(note, status)"
+            [@delete]="note?.isArchived ? 'delete' : 'void'" [@selectNote]="note?.isSelected ? 'selectNote' : 'void'"
+            (@selectNote.done)="onSelectNoteAnimationEnd(note)">
+            <a>
+              <div class="app-notes-list__item__footer">
+                <mat-icon class="app-notes-list__item__icon me-1" (click)="pinNote(note)"
+                  [@pinUnpin]="note?.isPinned ? 'pinned' : 'unPinned'" aria-label="Pin Note">
+                  push_pin
+                </mat-icon>
 
-            <div *ngFor="let note of allNotes$ | async; let i = index; trackBy: noteTrackByFn">
-              <div class="col-12 app-notes-list__item" (click)="onNoteItemClick(note, status)"
-                [@delete]="note?.isArchived ? 'delete' : 'void'"
-                [@selectNote]="note?.isSelected ? 'selectNote' : 'void'"
-                (@selectNote.done)="onSelectNoteAnimationEnd(note)">
-                <a>
-                  <div class="app-notes-list__item__footer">
-                    <mat-icon class="app-notes-list__item__icon me-1" (click)="pinNote(note)"
-                      [@pinUnpin]="note?.isPinned ? 'pinned' : 'unPinned'" aria-label="Pin Note">
-                      push_pin
-                    </mat-icon>
+                <mat-icon class="app-notes-list__item__icon" (click)="completeNote(note)"
+                  [@completeIncomplete]="note?.isComplete ? 'complete' : 'inComplete'" aria-label="Complete Note">
+                  task_alt
+                </mat-icon>
 
-                    <mat-icon class="app-notes-list__item__icon" (click)="completeNote(note)"
-                      [@completeIncomplete]="note?.isComplete ? 'complete' : 'inComplete'" aria-label="Complete Note">
-                      task_alt
-                    </mat-icon>
-
-                    <small class="ms-3">
-                      {{ note?.dateCreated | date : "short" }}
-                    </small>
-                  </div>
-                  <p class="app-notes-list__item__title">
-                    {{ note?.title }}
-
-                    <span class="app-notes-list__item__remove" (click)="removeNote(note._id)">
-                      <mat-icon>close</mat-icon>
-                    </span>
-                  </p>
-                  <div class="app-notes-list__item__body">
-                    <div [innerHTML]="note?.body"></div>
-                  </div>
-                </a>
+                <small class="ms-3">
+                  {{ note?.dateCreated | date : "short" }}
+                </small>
               </div>
-            </div>
-          </div>
+              <p class="app-notes-list__item__title">
+                {{ note?.title }}
 
-        </div>
-
-        <div *ngIf="!isLoading && isEmptyResult">
-          <div class="col-12 mt-3">
-            <div class="alert alert-info" role="alert">No notes found.</div>
-          </div>
-        </div>
-
-        <div *ngIf="isLoading">
-          <div class="col-12 mt-5 text-center">
-            <div class="spinner-border app-notes-list__spinner" role="status"></div>
+                <span class="app-notes-list__item__remove" (click)="removeNote(note._id)">
+                  <mat-icon>close</mat-icon>
+                </span>
+              </p>
+              <div class="app-notes-list__item__body">
+                <div [innerHTML]="note?.body"></div>
+              </div>
+            </a>
           </div>
         </div>
+      </div>
 
-        <!-- ADD CTA - START -->
-        <button matRipple type="button" class="app-notes-list__add" (click)="onAddNote()"
-          [@cta]="cta === 'add' ? 'cta-click' : 'void'" (@cta.done)="onAddNoteAnimationEnd(cta)">
-          <mat-icon matRipple aria-label="New Note">
-            add
-          </mat-icon>
-        </button>
-        <!-- ADD CTA - END -->
-
-
-        <!-- SEARCH CTA - START -->
-        <button matRipple type="button" class="app-notes-list__search" (click)="onSearchNote()"
-          [@cta]="cta === 'search' ? 'cta-click' : 'void'">
-          <mat-icon matRipple aria-label="Search Note">
-            search
-          </mat-icon>
-        </button>
-        <!-- SEARCH CTA - END -->
-
+      <div *ngIf="status !== 'loading' && (totalNumOfNotes$ | async) === 0 && (areNotesFiltered$ | async)">
+        <div class="col-12 col-lg-4 mx-auto mt-3 text-center">
+          <mat-icon class="app-notes-list__not-found">sentiment_very_dissatisfied</mat-icon>
+          <p>We searched a lot, but could not find anything!</p>
+        </div>
       </div>
     </div>
+
+    <!-- ADD CTA - START -->
+    <button matRipple type="button" class="app-notes-list__add" (click)="onAddNote()"
+      [@cta]="cta === 'add' ? 'cta-click' : 'void'" (@cta.done)="onAddNoteAnimationEnd(cta)">
+      <mat-icon matRipple aria-label="New Note">
+        add
+      </mat-icon>
+    </button>
+    <!-- ADD CTA - END -->
+
+
+    <!-- SEARCH CTA - START -->
+    <button matRipple type="button" class="app-notes-list__search" (click)="onSearchNote()"
+      [@cta]="cta === 'search' ? 'cta-click' : 'void'" (@cta.done)="onSearchNoteAnimationEned(cta)">
+      <mat-icon matRipple aria-label="Search Note">
+        search
+      </mat-icon>
+    </button>
+    <!-- SEARCH CTA - END -->
+
   </div>
+  <!-- </div> -->
+  <!-- </div> -->
 </section>

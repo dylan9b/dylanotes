@@ -21,14 +21,18 @@ export const noteReducer = createReducer(
     isFiltered: state.isFiltered,
   })),
   on(noteActions.loadNotesSuccess, (state, { notes, isFiltered }) => {
+    const updatedNotes = notes?.length
+      ? notesAdapter.setMany(
+          notes?.map((note) => {
+            return { ...note, isSelected: false };
+          }),
+          state
+        )
+      : notesAdapter.removeAll(state);
+
     return {
       ...state,
-      ...notesAdapter.setMany(
-        notes?.map((note) => {
-          return { ...note, isSelected: false };
-        }),
-        state
-      ),
+      ...updatedNotes,
       isFiltered,
       error: null,
       status: STATUS.SUCCESS,
@@ -43,9 +47,6 @@ export const noteReducer = createReducer(
   // UPDATE NOTE
   on(noteActions.updateNote, (state) => ({ ...state, status: STATUS.LOADING })),
   on(noteActions.updateNoteSuccess, (state, { note }) => {
-    const a = notesAdapter.updateOne(note, state);
-    debugger;
-
     return {
       ...state,
       ...notesAdapter.updateOne(note, state),

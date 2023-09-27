@@ -1,0 +1,14 @@
+<section class="app-notes-search">
+  <div class="row">
+    <div class="col-12">
+      <span class="app-notes-list__filter__container">
+        <mat-form-field class="w-100">
+          <mat-icon matPrefix>search</mat-icon>
+          <mat-label>Filter notes</mat-label>
+          <input type="text" matInput formControlName="title" placeholder="Type to begin searching ..."
+            (keydown.enter)="searchNotes($event)">
+        </mat-form-field>
+      </span>
+    </div>
+  </div>
+</section>

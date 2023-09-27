@@ -5,10 +5,12 @@
 @import "node_modules/bootstrap/scss/mixins";
 
 .app-notes-list {
-  &__spinner {
-    width: 4em;
-    height: 4em;
-    color: $persian-pink;
+  &__not-found {
+    height: unset !important;
+    width: unset !important;
+    font-size: 18em;
+    display: inline;
+    color: lightgray;
   }
 
   &__add {
@@ -39,30 +41,6 @@
     background-color: $eggplant;
     border-color: $eggplant;
     filter: brightness(1.5);
-  }
-
-  &__filter {
-    &__container {
-      i {
-        position: absolute;
-        padding: 10px;
-        pointer-events: none;
-      }
-
-      &__input {
-        padding-left: 2.5em;
-        border-radius: 50px;
-        box-shadow: none;
-        background: #ececec66;
-        transition: 0.3s ease all;
-
-        &:focus {
-          border-color: transparent;
-          transition: 0.3s ease all;
-          box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 15%);
-        }
-      }
-    }
   }
 
   &__items {
@@ -148,3 +126,5 @@
     }
   }
 }
+
+

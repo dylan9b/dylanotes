@@ -1,0 +1,16 @@
+.status {
+    &__base {
+      --mdc-snackbar-supporting-text-color: #{$light};
+      --mat-snack-bar-button-color: #{$light};
+    }
+  
+    &__500 {
+      @extend .status__base;
+      --mdc-snackbar-container-color: #{$cyclamen};
+    }
+    &__200 {
+      @extend .status__base;
+      --mdc-snackbar-container-color: #{$medium-sea-green};
+      --mat-snack-bar-button-color: #{$light};
+    }
+  }
