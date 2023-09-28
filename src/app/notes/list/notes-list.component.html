@@ -48,6 +48,7 @@
       </div>
     </div>
 
+
     <!-- ADD CTA - START -->
     <button matRipple type="button" class="app-notes-list__add" (click)="onAddNote()"
       [@cta]="cta === 'add' ? 'cta-click' : 'void'" (@cta.done)="onAddNoteAnimationEnd(cta)">
@@ -56,7 +57,6 @@
       </mat-icon>
     </button>
     <!-- ADD CTA - END -->
-
 
     <!-- SEARCH CTA - START -->
     <button matRipple type="button" class="app-notes-list__search" (click)="onSearchNote()"

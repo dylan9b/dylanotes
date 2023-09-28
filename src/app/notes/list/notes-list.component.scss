@@ -36,11 +36,14 @@
 
   &__search {
     @extend .app-notes-list__add;
-    bottom: unset;
-    top: 70px;
+
     background-color: $eggplant;
     border-color: $eggplant;
     filter: brightness(1.5);
+
+    bottom: 20px;
+    left: 20px;
+    right: unset;
   }
 
   &__items {
@@ -126,5 +129,3 @@
     }
   }
 }
-
-
