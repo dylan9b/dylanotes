@@ -24,3 +24,8 @@ export const selectIsFiltered = createSelector(
   selectNotesState,
   (state: NoteState) => state?.isFiltered
 );
+
+export const selectSearchTerm = createSelector(
+  selectNotesState,
+  (state: NoteState) => state.searchTerm
+);

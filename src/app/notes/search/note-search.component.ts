@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/state/app.state';
 import { noteActions } from 'src/state/notes/note.actions';
+import { selectSearchTerm } from 'src/state/notes/note.selectors';
 
 @Component({
   selector: 'app-note-search',
@@ -11,6 +12,9 @@ import { noteActions } from 'src/state/notes/note.actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NoteSearchComponent {
+  searchTerm$ = this._store.select(selectSearchTerm);
+
+
   constructor(private readonly _store: Store<AppState>) {}
 
   /**

@@ -9,16 +9,18 @@ export const initialState: NoteState = notesAdapter.getInitialState({
   error: null,
   status: STATUS.ERROR,
   isFiltered: false,
+  searchTerm: null,
 });
 
 export const noteReducer = createReducer(
   initialState,
 
   // GET NOTES
-  on(noteActions.loadNotes, (state) => ({
+  on(noteActions.loadNotes, (state, { searchTerm, isFiltered }) => ({
     ...state,
     status: STATUS.LOADING,
-    isFiltered: state.isFiltered,
+    isFiltered,
+    searchTerm,
   })),
   on(noteActions.loadNotesSuccess, (state, { notes, isFiltered }) => {
     const updatedNotes = notes?.length

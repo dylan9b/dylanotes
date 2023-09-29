@@ -49,7 +49,7 @@ export class NoteEffects {
           map((notes) =>
             noteActions.loadNotesSuccess({
               notes: notes,
-              isFiltered: action.isFiltered,
+              isFiltered: action?.isFiltered,
             })
           ),
           catchError((error) => of(noteActions.loadNotesFail({ error })))

@@ -5,7 +5,7 @@
         <mat-form-field class="w-100">
           <mat-icon matPrefix>search</mat-icon>
           <mat-label>Filter notes</mat-label>
-          <input type="text" matInput formControlName="title" placeholder="Type to begin searching ..."
+          <input type="text" matInput [value]="searchTerm$ | async" placeholder="Type to begin searching ..."
             (keydown.enter)="searchNotes($event)">
         </mat-form-field>
       </span>
