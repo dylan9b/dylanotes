@@ -16,7 +16,6 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { NoteUtilService } from '@services/note-util.service';
-import { take } from 'rxjs';
 import { Animations } from 'src/app/animations/animations';
 import { NotesStep } from 'src/app/header/_models/header-input.model';
 import { AppState } from 'src/state/app.state';
@@ -45,7 +44,7 @@ export class NotesListComponent implements OnInit {
   allNotes$ = this._store.select(selectAllNotes);
   totalNumOfNotes$ = this._store.select(selectNotesTotal);
   areNotesFiltered$ = this._store.select(selectIsFiltered);
-  
+
   status$ = this._store.select(selectStatus);
   cta$ = this._store.select(selectCta);
 
@@ -105,19 +104,18 @@ export class NotesListComponent implements OnInit {
     );
   }
 
-  onSearchNoteAnimationEned(action: string): void {
+  onSearchNoteAnimationEnd(action: string): void {
     if (action === CTA_ACTION_STATES.SEARCH) {
       const searchBottomSheet = this._bottomSheet.open(NoteSearchComponent);
-      searchBottomSheet
-        .afterDismissed()
-        .pipe(take(1))
-        .subscribe(() => {
-          this._store.dispatch(
-            ctaActions.updateCTA({ action: CTA_ACTION_STATES.PENDING })
-          );
+      searchBottomSheet.afterDismissed()
+      // .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this._store.dispatch(
+          ctaActions.updateCTA({ action: CTA_ACTION_STATES.PENDING })
+        );
 
-          this.allNotes$ = this._store.select(selectAllNotes);
-        });
+        // this.allNotes$ = this._store.select(selectAllNotes);
+      });
     }
   }
 

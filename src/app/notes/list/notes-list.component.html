@@ -60,7 +60,7 @@
 
     <!-- SEARCH CTA - START -->
     <button matRipple type="button" class="app-notes-list__search" (click)="onSearchNote()"
-      [@cta]="cta === 'search' ? 'cta-click' : 'void'" (@cta.done)="onSearchNoteAnimationEned(cta)">
+      [@cta]="cta === 'search' ? 'cta-click' : 'void'" (@cta.done)="onSearchNoteAnimationEnd(cta)">
       <mat-icon matRipple aria-label="Search Note">
         search
       </mat-icon>

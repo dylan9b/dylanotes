@@ -23,22 +23,29 @@ export const noteReducer = createReducer(
     searchTerm,
   })),
   on(noteActions.loadNotesSuccess, (state, { notes, isFiltered }) => {
-    const updatedNotes = notes?.length
-      ? notesAdapter.setMany(
-          notes?.map((note) => {
-            return { ...note, isSelected: false };
-          }),
-          state
-        )
-      : notesAdapter.removeAll(state);
+    let updatedNotes = notesAdapter.removeAll(state);
 
-    return {
+    let updatedState = {
+      ...state,
+      ...updatedNotes,
+    };
+
+    updatedNotes = notesAdapter.setMany(
+      notes?.map((note) => {
+        return { ...note, isSelected: false };
+      }),
+      updatedState
+    );
+
+    updatedState = {
       ...state,
       ...updatedNotes,
       isFiltered,
       error: null,
       status: STATUS.SUCCESS,
     };
+
+    return updatedState;
   }),
   on(noteActions.loadNotesFail, (state, { error }) => ({
     ...state,

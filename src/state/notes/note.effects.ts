@@ -69,9 +69,9 @@ export class NoteEffects {
               changes: { ...note },
             };
 
-            this._snackBar.open('Note successfully updated!', 'Success', {
-              panelClass: 'status__200',
-            });
+            // this._snackBar.open('Note successfully updated!', 'Success', {
+            //   panelClass: 'status__200',
+            // });
 
             return noteActions.updateNoteSuccess({ note: updatedNote });
           }),
@@ -93,9 +93,9 @@ export class NoteEffects {
               changes: { isArchived: true },
             };
 
-            this._snackBar.open('Note successfully deleted!', 'Success', {
-              panelClass: 'status__200',
-            });
+            // this._snackBar.open('Note successfully deleted!', 'Success', {
+            //   panelClass: 'status__200',
+            // });
 
             return noteActions.archiveNoteSuccess({ note: updatedNote });
           }),
@@ -111,9 +111,9 @@ export class NoteEffects {
       switchMap((noteQuery) =>
         from(this._noteService.postNote(noteQuery?.note)).pipe(
           map((note) => {
-            this._snackBar.open('Note successfully created!', 'Success', {
-              panelClass: 'status__200',
-            });
+            // this._snackBar.open('Note successfully created!', 'Success', {
+            //   panelClass: 'status__200',
+            // });
 
             return noteActions.postNoteSuccess({ note: note });
           }),
