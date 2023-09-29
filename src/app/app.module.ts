@@ -21,7 +21,6 @@ import { noteReducer } from 'src/state/notes/note.reducer';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ErrorInterceptor } from './http-interceptors/error-interceptor';
-import { NotesRoutingModule } from './notes/notes-routing.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -30,7 +29,7 @@ import { NotesRoutingModule } from './notes/notes-routing.module';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    NotesRoutingModule,
+    // NotesRoutingModule,
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,

@@ -38,6 +38,6 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 ### - Convert lists in ngrx state to objects as they are much faster to access { [id] : object } - D
 ### - Animate the back button in header
 ### - Animate item in lists to appear one after another in quick succession - D
-### - Add new feature for the search icon
+### - Add new feature for the search icon - D
 ####  - Bottom sheet to appear and inside it will include the search filter input - D
 ### - New state in NGRX to know if a CTA action has been applied - D

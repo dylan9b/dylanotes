@@ -1,11 +1,13 @@
 import { Component, Input } from '@angular/core';
-import { IHeaderInput, NotesStep } from './_models/header-input.model';
 
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/state/app.state';
 import { ctaActions } from 'src/state/cta/cta.actions';
+import { selectCta } from 'src/state/cta/cta.selectors';
+import { CTA_ACTION_STATES } from 'src/state/cta/cta.state';
 import { Animations } from '../animations/animations';
+import { IHeaderInput } from './_models/header-input.model';
 
 @Component({
   selector: 'app-header',
@@ -14,6 +16,8 @@ import { Animations } from '../animations/animations';
   animations: [Animations.cta],
 })
 export class HeaderComponent {
+  cta$ = this._store.select(selectCta);
+
   private _input!: IHeaderInput;
 
   get input(): IHeaderInput {
@@ -30,10 +34,12 @@ export class HeaderComponent {
     private readonly _store: Store<AppState>
   ) {}
 
-  goBack(): void {
+  onBackButtonClick(): void {
     this._store.dispatch(ctaActions.updateCTA({ action: 'back' }));
+  }
 
-    if (this.input.step === NotesStep.ITEM) {
+  goBack(cta: string): void {
+    if (cta === CTA_ACTION_STATES.BACK) {
       this._router.navigate(['./notes', 'list']);
     }
   }

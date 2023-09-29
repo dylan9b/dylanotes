@@ -1,32 +1,18 @@
-import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { NgModule } from '@angular/core';
+import { NotesRoutingModule } from './notes/notes-routing.module';
+
 const routes: Routes = [
-    {
-        path: 'notes',
-        children: [
-            {
-                path: '',
-                loadChildren: () => import('./notes/notes.module').then(m => m.NotesModule)
-            },
-            {
-                path: 'list',
-                loadChildren: () => import('./notes/list/notes-list.module').then(m => m.NotesListModule)
-            },
-            {
-                path: 'new',
-                loadChildren: () => import('./notes/item/notes-item.module').then(m => m.NotesItemModule)
-            },
-            {
-                path: ':id',
-                loadChildren: () => import('./notes/item/notes-item.module').then(m => m.NotesItemModule)
-            }
-        ]
-    }
+  {
+    path: 'notes',
+    loadChildren: () =>
+      import('./notes/notes.module').then((m) => m.NotesModule),
+  },
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule]
+  imports: [RouterModule.forRoot(routes), NotesRoutingModule],
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

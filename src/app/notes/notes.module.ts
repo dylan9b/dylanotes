@@ -5,15 +5,8 @@ import { NotesRoutingModule } from './notes-routing.module';
 import { NotesComponent } from './notes.component';
 
 @NgModule({
-    imports: [
-        NotesItemModule,
-        NotesListModule,
-        NotesRoutingModule,
-    ],
-    declarations: [
-        NotesComponent
-    ],
-    providers: [],
-    bootstrap: [NotesComponent]
+  imports: [NotesItemModule, NotesListModule, NotesRoutingModule],
+  declarations: [NotesComponent],
+  bootstrap: [NotesComponent],
 })
-export class NotesModule { }
+export class NotesModule {}

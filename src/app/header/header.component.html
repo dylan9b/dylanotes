@@ -1,11 +1,13 @@
-<section class="app-header">
+<header class="app-header">
   <div class="row h-100 d-flex align-items-center">
     <div class="col-4">
-      <mat-icon class="app-header__back-icon" *ngIf="input?.showGoBackIcon" (click)="goBack()" aria-label="Go back">
+      <mat-icon class="app-header__back-icon" *ngIf="input?.showGoBackIcon && (cta$ | async) as cta"
+        [@cta]="cta === 'back' ? 'cta-click' : 'void'" (click)="onBackButtonClick()" (@cta.done)="goBack(cta)"
+        aria-label="Go back">
         arrow_circle_left</mat-icon>
     </div>
     <div class="col-4">
       <span class="app-header__title">dylanotes</span>
     </div>
   </div>
-</section>
+</header>
