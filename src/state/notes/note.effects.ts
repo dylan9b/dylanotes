@@ -1,13 +1,5 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import {
-  catchError,
-  from,
-  map,
-  of,
-  pipe,
-  switchMap,
-  withLatestFrom,
-} from 'rxjs';
+import { catchError, from, map, of, pipe, switchMap } from 'rxjs';
 
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -33,18 +25,7 @@ export class NoteEffects {
   loadNotes$ = createEffect(() =>
     this._actions$.pipe(
       ofType(noteActions.loadNotes),
-      withLatestFrom(this.allNotes$),
-      switchMap(([action, notes]) => {
-        if (!action?.isFiltered) {
-          if (Object.entries(notes).length > 0) {
-            return of(
-              noteActions.loadNotesSuccess({
-                notes: notes,
-                isFiltered: action.isFiltered,
-              })
-            );
-          }
-        }
+      switchMap((action) => {
         return from(this._noteService.getNotes(action?.searchTerm)).pipe(
           map((notes) =>
             noteActions.loadNotesSuccess({
